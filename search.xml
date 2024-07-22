@@ -70,57 +70,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PVE下lxc搭建emby实现intel核显硬解</title>
-    <url>/posts/1828301106.html</url>
-    <content><![CDATA[<p>lxc搭建emby的笔记！本文使用PVE x86平台最新版8.2版本</p>
-<span id="more"></span>
-<h3 id="PVE检查核显固件"><a href="#PVE检查核显固件" class="headerlink" title="PVE检查核显固件"></a>PVE检查核显固件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /lib/firmware/i915 &amp;&amp; <span class="built_in">ls</span> ehl_guc*.bin &amp;&amp; <span class="built_in">ls</span> ehl_huc*.bin &amp;&amp; <span class="built_in">ls</span> icl_dmc*.bin</span><br></pre></td></tr></table></figure>
-<p>显示类似如下内容则说明不缺固件，否则需要补固件<br><img src="/images/image-qbci-1.png" alt="img"><br>如果缺固件，则补固件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /lib/firmware/i915 &amp;&amp; <span class="built_in">cd</span> /lib/firmware/i915</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_guc_70.1.1.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_huc_9.0.0.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/icl_dmc_ver1_09.bin</span><br></pre></td></tr></table></figure>
-<h3 id="检查核显是否正确加载"><a href="#检查核显是否正确加载" class="headerlink" title="检查核显是否正确加载"></a>检查核显是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
-<p><img src="/images/image-qbci-2.png" alt="img"><br>没有显示GuC、HuC内容说明没有正确加载核显驱动，需要修改i915.conf文件</p>
-<h3 id="修改i915-conf文件"><a href="#修改i915-conf文件" class="headerlink" title="修改i915.conf文件"></a>修改i915.conf文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;options i915 enable_guc=3&quot;</span> &gt;&gt; /etc/modprobe.d/i915.conf</span><br></pre></td></tr></table></figure>
-<h3 id="修改后重启机器"><a href="#修改后重启机器" class="headerlink" title="修改后重启机器"></a>修改后重启机器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
-<h3 id="再次检查i915驱动是否正确加载"><a href="#再次检查i915驱动是否正确加载" class="headerlink" title="再次检查i915驱动是否正确加载"></a>再次检查i915驱动是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
-<p>显示如下，正确加载，驱动核显成功！<br><img src="/images/image-qbci-3.png" alt="img"></p>
-<p>在PVE下已经把核显成功驱动了，接下来挂载到lxc里面使用就行！</p>
-<h3 id="lxc使用特权容器，非特权容器会有权限问题！！！"><a href="#lxc使用特权容器，非特权容器会有权限问题！！！" class="headerlink" title="lxc使用特权容器，非特权容器会有权限问题！！！"></a>lxc使用特权容器，非特权容器会有权限问题！！！</h3><h3 id="查看cgroup版本"><a href="#查看cgroup版本" class="headerlink" title="查看cgroup版本"></a>查看cgroup版本</h3><p>PVE高版本都是使用cgroup2，为了保险起见，可以查看一下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mount | grep cgroup</span><br></pre></td></tr></table></figure>
-<p>如图，显示是cgroup2<br><img src="/images/image-qbci-4.png" alt="img"></p>
-<h3 id="编辑lxc配置文件"><a href="#编辑lxc配置文件" class="headerlink" title="编辑lxc配置文件"></a>编辑lxc配置文件</h3><p>以lxc 110为例</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/110.conf</span><br></pre></td></tr></table></figure>
-<p>将下列内容粘贴到打开的配置文件最下方</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.cgroup2.devices.allow: c 226:* rwm</span><br><span class="line">lxc.mount.entry: /dev/dri dev/dri none <span class="built_in">bind</span>,optional,create=<span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="重启lxc并进入"><a href="#重启lxc并进入" class="headerlink" title="重启lxc并进入"></a>重启lxc并进入</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct reboot 110 &amp;&amp; lxc-attach 110</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装EMBY"><a href="#安装EMBY" class="headerlink" title="安装EMBY"></a>安装EMBY</h3><p><a href="https://emby.media/linux-server.html">emby下载页</a>，如不是debian，自行选择对应系统及安装方法</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/MediaBrowser/Emby.Releases/releases/download/4.8.8.0/emby-server-deb_4.8.8.0_amd64.deb</span><br><span class="line">dpkg -i emby-server-deb_4.8.8.0_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<h3 id="解决EMBY权限问题"><a href="#解决EMBY权限问题" class="headerlink" title="解决EMBY权限问题"></a>解决EMBY权限问题</h3><p>emby安装完默认是emby用户运行，可能导致一系列权限问题，比如调用GPU无权限、挂载的媒体库目录无写入权限，有两种方法解决问题。</p>
-<h4 id="方法一：直接root用户运行emby"><a href="#方法一：直接root用户运行emby" class="headerlink" title="方法一：直接root用户运行emby"></a>方法一：直接root用户运行emby</h4><p>建议此方法，最简单，方便，快速，一劳永逸！</p>
-<h5 id="修改emby-server-service文件"><a href="#修改emby-server-service文件" class="headerlink" title="修改emby-server.service文件"></a>修改emby-server.service文件</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /lib/systemd/system/emby-server.service</span><br></pre></td></tr></table></figure>
-<p>这样如下修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Emby Server is a personal media server with apps on just about every device</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=/etc/emby-server.conf</span><br><span class="line">WorkingDirectory=/opt/emby-server</span><br><span class="line">ExecStart=/opt/emby-server/bin/emby-server</span><br><span class="line">RestartForceExitStatus=3</span><br><span class="line">User=root <span class="comment"># 原本应该为emby，修改此处用户为root即可</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-<h5 id="重载systemd"><a href="#重载systemd" class="headerlink" title="重载systemd"></a>重载systemd</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
-<h5 id="重启emby-server"><a href="#重启emby-server" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
-<h4 id="方法二：给emby用户各种权限"><a href="#方法二：给emby用户各种权限" class="headerlink" title="方法二：给emby用户各种权限"></a>方法二：给emby用户各种权限</h4><p>以赋予核显权限为例，媒体库目录如果无法写入也可类似方法解决！</p>
-<h5 id="查看lxc容器内核显"><a href="#查看lxc容器内核显" class="headerlink" title="查看lxc容器内核显"></a>查看lxc容器内核显</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -lh /dev/dri/</span><br></pre></td></tr></table></figure>
-<p><img src="/images/image-qbci-5.png" alt="img"><br>不知为何，发现lxc内核显设备用户组与PVE中不一样，需要给emby用户访问权限</p>
-<h5 id="查看emby用户的组权限"><a href="#查看emby用户的组权限" class="headerlink" title="查看emby用户的组权限"></a>查看emby用户的组权限</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">groups</span> emby</span><br></pre></td></tr></table></figure>
-<h5 id="将emby用户加入核显设备的用户组"><a href="#将emby用户加入核显设备的用户组" class="headerlink" title="将emby用户加入核显设备的用户组"></a>将emby用户加入核显设备的用户组</h5><p>缺啥补啥，我只缺sgx组权限，则只加sgx组</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG sgx emby</span><br></pre></td></tr></table></figure>
-<p><img src="/images/image-qbci-6.png" alt="img"></p>
-<h5 id="重启emby-server-1"><a href="#重启emby-server-1" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
-
-<h3 id="进入emby-web"><a href="#进入emby-web" class="headerlink" title="进入emby web"></a>进入emby web</h3><p>接下来进入emby就可以看到硬解的编码器了<br><img src="/images/image-qbci-7.png" alt="img"><br>播放时调整视频分辨率后有显示硬解图标<br><img src="/images/image-qbci-8.jpg" alt="img"></p>
-<h3 id="可安装intel-gpu-tools查看gpu占用"><a href="#可安装intel-gpu-tools查看gpu占用" class="headerlink" title="可安装intel_gpu_tools查看gpu占用"></a>可安装intel_gpu_tools查看gpu占用</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install intel_gpu_tools -y</span><br></pre></td></tr></table></figure>
-<p>查看gpu占用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">intel_gpu_top</span><br></pre></td></tr></table></figure>
-<p><img src="/images/image-qbci-9.png" alt="img"><br>视频播放时显示占用，完美硬解！</p>
-]]></content>
-  </entry>
-  <entry>
     <title>golang笔记</title>
     <url>/posts/1059068992.html</url>
     <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
@@ -193,6 +142,57 @@
         <tag>linux</tag>
         <tag>hexo</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>PVE下lxc搭建emby实现intel核显硬解</title>
+    <url>/posts/1828301106.html</url>
+    <content><![CDATA[<p>lxc搭建emby的笔记！本文使用PVE x86平台最新版8.2版本</p>
+<span id="more"></span>
+<h3 id="PVE检查核显固件"><a href="#PVE检查核显固件" class="headerlink" title="PVE检查核显固件"></a>PVE检查核显固件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /lib/firmware/i915 &amp;&amp; <span class="built_in">ls</span> ehl_guc*.bin &amp;&amp; <span class="built_in">ls</span> ehl_huc*.bin &amp;&amp; <span class="built_in">ls</span> icl_dmc*.bin</span><br></pre></td></tr></table></figure>
+<p>显示类似如下内容则说明不缺固件，否则需要补固件<br><img src="/images/image-qbci-1.png" alt="img"><br>如果缺固件，则补固件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /lib/firmware/i915 &amp;&amp; <span class="built_in">cd</span> /lib/firmware/i915</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_guc_70.1.1.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_huc_9.0.0.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/icl_dmc_ver1_09.bin</span><br></pre></td></tr></table></figure>
+<h3 id="检查核显是否正确加载"><a href="#检查核显是否正确加载" class="headerlink" title="检查核显是否正确加载"></a>检查核显是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-qbci-2.png" alt="img"><br>没有显示GuC、HuC内容说明没有正确加载核显驱动，需要修改i915.conf文件</p>
+<h3 id="修改i915-conf文件"><a href="#修改i915-conf文件" class="headerlink" title="修改i915.conf文件"></a>修改i915.conf文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;options i915 enable_guc=3&quot;</span> &gt;&gt; /etc/modprobe.d/i915.conf</span><br></pre></td></tr></table></figure>
+<h3 id="修改后重启机器"><a href="#修改后重启机器" class="headerlink" title="修改后重启机器"></a>修改后重启机器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<h3 id="再次检查i915驱动是否正确加载"><a href="#再次检查i915驱动是否正确加载" class="headerlink" title="再次检查i915驱动是否正确加载"></a>再次检查i915驱动是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
+<p>显示如下，正确加载，驱动核显成功！<br><img src="/images/image-qbci-3.png" alt="img"></p>
+<p>在PVE下已经把核显成功驱动了，接下来挂载到lxc里面使用就行！</p>
+<h3 id="lxc使用特权容器，非特权容器会有权限问题！！！"><a href="#lxc使用特权容器，非特权容器会有权限问题！！！" class="headerlink" title="lxc使用特权容器，非特权容器会有权限问题！！！"></a>lxc使用特权容器，非特权容器会有权限问题！！！</h3><h3 id="查看cgroup版本"><a href="#查看cgroup版本" class="headerlink" title="查看cgroup版本"></a>查看cgroup版本</h3><p>PVE高版本都是使用cgroup2，为了保险起见，可以查看一下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mount | grep cgroup</span><br></pre></td></tr></table></figure>
+<p>如图，显示是cgroup2<br><img src="/images/image-qbci-4.png" alt="img"></p>
+<h3 id="编辑lxc配置文件"><a href="#编辑lxc配置文件" class="headerlink" title="编辑lxc配置文件"></a>编辑lxc配置文件</h3><p>以lxc 110为例</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/110.conf</span><br></pre></td></tr></table></figure>
+<p>将下列内容粘贴到打开的配置文件最下方</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.cgroup2.devices.allow: c 226:* rwm</span><br><span class="line">lxc.mount.entry: /dev/dri dev/dri none <span class="built_in">bind</span>,optional,create=<span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重启lxc并进入"><a href="#重启lxc并进入" class="headerlink" title="重启lxc并进入"></a>重启lxc并进入</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct reboot 110 &amp;&amp; lxc-attach 110</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装EMBY"><a href="#安装EMBY" class="headerlink" title="安装EMBY"></a>安装EMBY</h3><p><a href="https://emby.media/linux-server.html">emby下载页</a>，如不是debian，自行选择对应系统及安装方法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/MediaBrowser/Emby.Releases/releases/download/4.8.8.0/emby-server-deb_4.8.8.0_amd64.deb</span><br><span class="line">dpkg -i emby-server-deb_4.8.8.0_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h3 id="解决EMBY权限问题"><a href="#解决EMBY权限问题" class="headerlink" title="解决EMBY权限问题"></a>解决EMBY权限问题</h3><p>emby安装完默认是emby用户运行，可能导致一系列权限问题，比如调用GPU无权限、挂载的媒体库目录无写入权限，有两种方法解决问题。</p>
+<h4 id="方法一：直接root用户运行emby"><a href="#方法一：直接root用户运行emby" class="headerlink" title="方法一：直接root用户运行emby"></a>方法一：直接root用户运行emby</h4><p>建议此方法，最简单，方便，快速，一劳永逸！</p>
+<h5 id="修改emby-server-service文件"><a href="#修改emby-server-service文件" class="headerlink" title="修改emby-server.service文件"></a>修改emby-server.service文件</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /lib/systemd/system/emby-server.service</span><br></pre></td></tr></table></figure>
+<p>这样如下修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Emby Server is a personal media server with apps on just about every device</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=/etc/emby-server.conf</span><br><span class="line">WorkingDirectory=/opt/emby-server</span><br><span class="line">ExecStart=/opt/emby-server/bin/emby-server</span><br><span class="line">RestartForceExitStatus=3</span><br><span class="line">User=root <span class="comment"># 原本应该为emby，修改此处用户为root即可</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<h5 id="重载systemd"><a href="#重载systemd" class="headerlink" title="重载systemd"></a>重载systemd</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+<h5 id="重启emby-server"><a href="#重启emby-server" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
+<h4 id="方法二：给emby用户各种权限"><a href="#方法二：给emby用户各种权限" class="headerlink" title="方法二：给emby用户各种权限"></a>方法二：给emby用户各种权限</h4><p>以赋予核显权限为例，媒体库目录如果无法写入也可类似方法解决！</p>
+<h5 id="查看lxc容器内核显"><a href="#查看lxc容器内核显" class="headerlink" title="查看lxc容器内核显"></a>查看lxc容器内核显</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -lh /dev/dri/</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-qbci-5.png" alt="img"><br>不知为何，发现lxc内核显设备用户组与PVE中不一样，需要给emby用户访问权限</p>
+<h5 id="查看emby用户的组权限"><a href="#查看emby用户的组权限" class="headerlink" title="查看emby用户的组权限"></a>查看emby用户的组权限</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">groups</span> emby</span><br></pre></td></tr></table></figure>
+<h5 id="将emby用户加入核显设备的用户组"><a href="#将emby用户加入核显设备的用户组" class="headerlink" title="将emby用户加入核显设备的用户组"></a>将emby用户加入核显设备的用户组</h5><p>缺啥补啥，我只缺sgx组权限，则只加sgx组</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG sgx emby</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-qbci-6.png" alt="img"></p>
+<h5 id="重启emby-server-1"><a href="#重启emby-server-1" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
+
+<h3 id="进入emby-web"><a href="#进入emby-web" class="headerlink" title="进入emby web"></a>进入emby web</h3><p>接下来进入emby就可以看到硬解的编码器了<br><img src="/images/image-qbci-7.png" alt="img"><br>播放时调整视频分辨率后有显示硬解图标<br><img src="/images/image-qbci-8.jpg" alt="img"></p>
+<h3 id="可安装intel-gpu-tools查看gpu占用"><a href="#可安装intel-gpu-tools查看gpu占用" class="headerlink" title="可安装intel_gpu_tools查看gpu占用"></a>可安装intel_gpu_tools查看gpu占用</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install intel_gpu_tools -y</span><br></pre></td></tr></table></figure>
+<p>查看gpu占用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">intel_gpu_top</span><br></pre></td></tr></table></figure>
+<p><img src="/images/image-qbci-9.png" alt="img"><br>视频播放时显示占用，完美硬解！</p>
+]]></content>
   </entry>
   <entry>
     <title>linux设置临时代理及清除</title>
@@ -282,38 +282,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用watchtower自动更新容器</title>
-    <url>/posts/527465299.html</url>
-    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
-<span id="more"></span>
-
-<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>公网IPV4的从无到有——natmap打洞</title>
     <url>/posts/1357308105.html</url>
     <content><![CDATA[<p>本文基于Debian而写。</p>
@@ -361,6 +329,38 @@
         <tag>linux</tag>
         <tag>lxc</tag>
         <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用watchtower自动更新容器</title>
+    <url>/posts/527465299.html</url>
+    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
+<span id="more"></span>
+
+<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
