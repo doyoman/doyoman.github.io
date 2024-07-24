@@ -40,6 +40,9 @@
 <meta property="article:published_time" content="2024-07-09T03:39:19.000Z">
 <meta property="article:modified_time" content="2024-07-15T07:00:19.000Z">
 <meta property="article:author" content="doyo">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="lxc">
+<meta property="article:tag" content="emby">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.olds.eu.org/images/image-qbci-1.png">
 
@@ -132,17 +135,17 @@
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">7</span></a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">8</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">13</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -234,6 +237,23 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2024-07-15 15:00:19" itemprop="dateModified" datetime="2024-07-15T15:00:19+08:00">2024-07-15</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/lxc/" itemprop="url" rel="index"><span itemprop="name">lxc</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/lxc/emby/" itemprop="url" rel="index"><span itemprop="name">emby</span></a>
+                </span>
+            </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -256,7 +276,7 @@
         <p>lxc搭建emby的笔记！本文使用PVE x86平台最新版8.2版本</p>
 <span id="more"></span>
 <h3 id="PVE检查核显固件"><a href="#PVE检查核显固件" class="headerlink" title="PVE检查核显固件"></a>PVE检查核显固件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /lib/firmware/i915 &amp;&amp; <span class="built_in">ls</span> ehl_guc*.bin &amp;&amp; <span class="built_in">ls</span> ehl_huc*.bin &amp;&amp; <span class="built_in">ls</span> icl_dmc*.bin</span><br></pre></td></tr></table></figure>
-<p>显示类似如下内容则说明不缺固件，否则需要补固件<br><img src="/images/image-qbci-1.png" alt="img"><br>如果缺固件，则补固件</p>
+<p>显示类似如下内容则说明不缺固件，否则需要补固件<br><img src="/../images/image-qbci-1.png" alt="img"><br>如果缺固件，则补固件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /lib/firmware/i915 &amp;&amp; <span class="built_in">cd</span> /lib/firmware/i915</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_guc_70.1.1.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_huc_9.0.0.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/icl_dmc_ver1_09.bin</span><br></pre></td></tr></table></figure>
 <h3 id="检查核显是否正确加载"><a href="#检查核显是否正确加载" class="headerlink" title="检查核显是否正确加载"></a>检查核显是否正确加载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
 <p><img src="/images/image-qbci-2.png" alt="img"><br>没有显示GuC、HuC内容说明没有正确加载核显驱动，需要修改i915.conf文件</p>
@@ -307,6 +327,12 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+              <a href="/tags/lxc/" rel="tag"><i class="fa fa-tag"></i> lxc</a>
+              <a href="/tags/emby/" rel="tag"><i class="fa fa-tag"></i> emby</a>
+          </div>
 
         
 
@@ -396,20 +422,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
