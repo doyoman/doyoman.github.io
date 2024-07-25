@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>PVE下lxc中文乱码解决方法</title>
+    <url>/posts/592933762.html</url>
+    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
+<span id="more"></span>
+<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
+<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
+<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
+<p>enjoy！</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>pve - lxc</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Arm机器基于debian的lxc容器初始化配置</title>
     <url>/posts/1826688815.html</url>
     <content><![CDATA[<p>自用的lxc容器初始化配置</p>
@@ -44,29 +67,6 @@
       <tags>
         <tag>linux</tag>
         <tag>lxc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PVE下lxc中文乱码解决方法</title>
-    <url>/posts/592933762.html</url>
-    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
-<span id="more"></span>
-<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
-<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
-<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
-<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
-<p>enjoy！</p>
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>pve</category>
-        <category>lxc</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>pve - lxc</tag>
       </tags>
   </entry>
   <entry>
@@ -131,33 +131,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang笔记</title>
-    <url>/posts/1059068992.html</url>
-    <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
-<span id="more"></span>
-
-<h2 id="最简代码"><a href="#最简代码" class="headerlink" title="最简代码"></a>最简代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> age = <span class="number">18</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello Word!&quot;</span>)</span><br><span class="line">	fmt.Println(age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="直接编译运行"><a href="#直接编译运行" class="headerlink" title="直接编译运行"></a>直接编译运行</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="编译二进制"><a href="#编译二进制" class="headerlink" title="编译二进制"></a>编译二进制</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="Linux下交叉编译"><a href="#Linux下交叉编译" class="headerlink" title="Linux下交叉编译"></a>Linux下交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="windows下cmd交叉编译"><a href="#windows下cmd交叉编译" class="headerlink" title="windows下cmd交叉编译"></a>windows下cmd交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> GOOS=linux</span><br><span class="line"><span class="built_in">set</span> GOARCH=amd64</span><br><span class="line"><span class="built_in">set</span> CGO_ENABLED=0</span><br><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="查看支持交叉编译的所有架构类型"><a href="#查看支持交叉编译的所有架构类型" class="headerlink" title="查看支持交叉编译的所有架构类型"></a>查看支持交叉编译的所有架构类型</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go tool dist list</span><br></pre></td></tr></table></figure>
-
-<h4 id="目前支持如下架构"><a href="#目前支持如下架构" class="headerlink" title="目前支持如下架构"></a>目前支持如下架构</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aix/ppc64</span><br><span class="line">android/386</span><br><span class="line">android/amd64</span><br><span class="line">android/arm</span><br><span class="line">android/arm64</span><br><span class="line">darwin/amd64</span><br><span class="line">darwin/arm64</span><br><span class="line">dragonfly/amd64</span><br><span class="line">freebsd/386</span><br><span class="line">freebsd/amd64</span><br><span class="line">freebsd/arm</span><br><span class="line">freebsd/arm64</span><br><span class="line">freebsd/riscv64</span><br><span class="line">illumos/amd64</span><br><span class="line">ios/amd64</span><br><span class="line">ios/arm64</span><br><span class="line">js/wasm</span><br><span class="line">linux/386</span><br><span class="line">linux/amd64</span><br><span class="line">linux/arm</span><br><span class="line">linux/arm64</span><br><span class="line">linux/loong64</span><br><span class="line">linux/mips</span><br><span class="line">linux/mips64</span><br><span class="line">linux/mips64le</span><br><span class="line">linux/mipsle</span><br><span class="line">linux/ppc64</span><br><span class="line">linux/ppc64le</span><br><span class="line">linux/riscv64</span><br><span class="line">linux/s390x</span><br><span class="line">netbsd/386</span><br><span class="line">netbsd/amd64</span><br><span class="line">netbsd/arm</span><br><span class="line">netbsd/arm64</span><br><span class="line">openbsd/386</span><br><span class="line">openbsd/amd64</span><br><span class="line">openbsd/arm</span><br><span class="line">openbsd/arm64</span><br><span class="line">openbsd/ppc64</span><br><span class="line">plan9/386</span><br><span class="line">plan9/amd64</span><br><span class="line">plan9/arm</span><br><span class="line">solaris/amd64</span><br><span class="line">wasip1/wasm</span><br><span class="line">windows/386</span><br><span class="line">windows/amd64</span><br><span class="line">windows/arm</span><br><span class="line">windows/arm64</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PVE创建lxc的openwrt容器</title>
     <url>/posts/826300242.html</url>
     <content><![CDATA[<p>在PVE中创建lxc的openwrt容器，更节省资源！</p>
@@ -205,6 +178,33 @@
       </tags>
   </entry>
   <entry>
+    <title>golang笔记</title>
+    <url>/posts/1059068992.html</url>
+    <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
+<span id="more"></span>
+
+<h2 id="最简代码"><a href="#最简代码" class="headerlink" title="最简代码"></a>最简代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> age = <span class="number">18</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello Word!&quot;</span>)</span><br><span class="line">	fmt.Println(age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="直接编译运行"><a href="#直接编译运行" class="headerlink" title="直接编译运行"></a>直接编译运行</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编译二进制"><a href="#编译二进制" class="headerlink" title="编译二进制"></a>编译二进制</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux下交叉编译"><a href="#Linux下交叉编译" class="headerlink" title="Linux下交叉编译"></a>Linux下交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="windows下cmd交叉编译"><a href="#windows下cmd交叉编译" class="headerlink" title="windows下cmd交叉编译"></a>windows下cmd交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> GOOS=linux</span><br><span class="line"><span class="built_in">set</span> GOARCH=amd64</span><br><span class="line"><span class="built_in">set</span> CGO_ENABLED=0</span><br><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看支持交叉编译的所有架构类型"><a href="#查看支持交叉编译的所有架构类型" class="headerlink" title="查看支持交叉编译的所有架构类型"></a>查看支持交叉编译的所有架构类型</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go tool dist list</span><br></pre></td></tr></table></figure>
+
+<h4 id="目前支持如下架构"><a href="#目前支持如下架构" class="headerlink" title="目前支持如下架构"></a>目前支持如下架构</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aix/ppc64</span><br><span class="line">android/386</span><br><span class="line">android/amd64</span><br><span class="line">android/arm</span><br><span class="line">android/arm64</span><br><span class="line">darwin/amd64</span><br><span class="line">darwin/arm64</span><br><span class="line">dragonfly/amd64</span><br><span class="line">freebsd/386</span><br><span class="line">freebsd/amd64</span><br><span class="line">freebsd/arm</span><br><span class="line">freebsd/arm64</span><br><span class="line">freebsd/riscv64</span><br><span class="line">illumos/amd64</span><br><span class="line">ios/amd64</span><br><span class="line">ios/arm64</span><br><span class="line">js/wasm</span><br><span class="line">linux/386</span><br><span class="line">linux/amd64</span><br><span class="line">linux/arm</span><br><span class="line">linux/arm64</span><br><span class="line">linux/loong64</span><br><span class="line">linux/mips</span><br><span class="line">linux/mips64</span><br><span class="line">linux/mips64le</span><br><span class="line">linux/mipsle</span><br><span class="line">linux/ppc64</span><br><span class="line">linux/ppc64le</span><br><span class="line">linux/riscv64</span><br><span class="line">linux/s390x</span><br><span class="line">netbsd/386</span><br><span class="line">netbsd/amd64</span><br><span class="line">netbsd/arm</span><br><span class="line">netbsd/arm64</span><br><span class="line">openbsd/386</span><br><span class="line">openbsd/amd64</span><br><span class="line">openbsd/arm</span><br><span class="line">openbsd/arm64</span><br><span class="line">openbsd/ppc64</span><br><span class="line">plan9/386</span><br><span class="line">plan9/amd64</span><br><span class="line">plan9/arm</span><br><span class="line">solaris/amd64</span><br><span class="line">wasip1/wasm</span><br><span class="line">windows/386</span><br><span class="line">windows/amd64</span><br><span class="line">windows/arm</span><br><span class="line">windows/arm64</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>go</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>linux设置临时代理及清除</title>
     <url>/posts/697366212.html</url>
     <content><![CDATA[<p>记录一下linux机器代理的设置方法</p>
@@ -233,7 +233,7 @@
 <h3 id="创建密钥对"><a href="#创建密钥对" class="headerlink" title="创建密钥对"></a>创建密钥对</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="添加公钥到GitHub"><a href="#添加公钥到GitHub" class="headerlink" title="添加公钥到GitHub"></a>添加公钥到GitHub</h3><p>公钥文件为”~&#x2F;.ssh&#x2F;id_rsa.pub”，添加到GitHub</p>
-<p><img src="/../images/ssh%E8%BF%9E%E6%8E%A5git%E4%BB%93%E5%BA%93/image-20240722231711784.png" alt="image-20240722231711784"></p>
+<p><img src="/../images/ssh%E8%BF%9E%E6%8E%A5git%E4%BB%93%E5%BA%93/image-20240722231711784.png" alt="img"></p>
 <h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
 
 <p>显示如下类似输出则可以连接上</p>
@@ -253,6 +253,28 @@
       <tags>
         <tag>linux</tag>
         <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为debian添加rc.local开机自启服务</title>
+    <url>/posts/2550623555.html</url>
+    <content><![CDATA[<p>debian11及以上没有rc.local这个开机自启文件了，某些时候有些许不便，但是我们可以把它加回来！</p>
+<span id="more"></span>
+<h2 id="写入rc-local文件"><a href="#写入rc-local文件" class="headerlink" title="写入rc.local文件"></a>写入rc.local文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/rc.local &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh -e</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># rc.local</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="string"># Make sure that the script will &quot;exit 0&quot; on success or any other</span></span><br><span class="line"><span class="string"># value on error.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="string"># bits.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># By default this script does nothing.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exit 0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>可以在“exit 0”之上添加需要开机执行的命令。</p>
+<h3 id="授予执行权限"><a href="#授予执行权限" class="headerlink" title="授予执行权限"></a>授予执行权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<h2 id="写入systemd文件"><a href="#写入systemd文件" class="headerlink" title="写入systemd文件"></a>写入systemd文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /lib/systemd/system/rc-local.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=/etc/rc.local Compatibility</span></span><br><span class="line"><span class="string">Documentation=man:systemd-rc-local-generator(8)</span></span><br><span class="line"><span class="string">ConditionFileIsExecutable=/etc/rc.local</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">ExecStart=/etc/rc.local start</span></span><br><span class="line"><span class="string">TimeoutSec=0</span></span><br><span class="line"><span class="string">RemainAfterExit=yes</span></span><br><span class="line"><span class="string">GuessMainPID=no</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重载配置以及设置rc-local开机自启"><a href="#重载配置以及设置rc-local开机自启" class="headerlink" title="重载配置以及设置rc.local开机自启"></a>重载配置以及设置rc.local开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rc-local.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rc-local.service</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -298,78 +320,6 @@
       <tags>
         <tag>linux</tag>
         <tag>lxc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>为debian添加rc.local开机自启服务</title>
-    <url>/posts/2550623555.html</url>
-    <content><![CDATA[<p>debian11及以上没有rc.local这个开机自启文件了，某些时候有些许不便，但是我们可以把它加回来！</p>
-<span id="more"></span>
-<h2 id="写入rc-local文件"><a href="#写入rc-local文件" class="headerlink" title="写入rc.local文件"></a>写入rc.local文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/rc.local &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh -e</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># rc.local</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="string"># Make sure that the script will &quot;exit 0&quot; on success or any other</span></span><br><span class="line"><span class="string"># value on error.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="string"># bits.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># By default this script does nothing.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exit 0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<p>可以在“exit 0”之上添加需要开机执行的命令。</p>
-<h3 id="授予执行权限"><a href="#授予执行权限" class="headerlink" title="授予执行权限"></a>授予执行权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<h2 id="写入systemd文件"><a href="#写入systemd文件" class="headerlink" title="写入systemd文件"></a>写入systemd文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /lib/systemd/system/rc-local.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=/etc/rc.local Compatibility</span></span><br><span class="line"><span class="string">Documentation=man:systemd-rc-local-generator(8)</span></span><br><span class="line"><span class="string">ConditionFileIsExecutable=/etc/rc.local</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">ExecStart=/etc/rc.local start</span></span><br><span class="line"><span class="string">TimeoutSec=0</span></span><br><span class="line"><span class="string">RemainAfterExit=yes</span></span><br><span class="line"><span class="string">GuessMainPID=no</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="重载配置以及设置rc-local开机自启"><a href="#重载配置以及设置rc-local开机自启" class="headerlink" title="重载配置以及设置rc.local开机自启"></a>重载配置以及设置rc.local开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rc-local.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rc-local.service</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>公网IPV4的从无到有——natmap打洞</title>
-    <url>/posts/1357308105.html</url>
-    <content><![CDATA[<p>本文基于Debian而写。</p>
-<p>不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！</p>
-<span id="more"></span>
-
-<p><a href="https://sing-box.sagernet.org/installation/package-manager/"><em>singbox服务端一键搭建点我</em></a></p>
-<h2 id="检测自己的nat类型"><a href="#检测自己的nat类型" class="headerlink" title="检测自己的nat类型"></a>检测自己的nat类型</h2><p>检测前一定要最大限度减少本地nat，路由器开dmz，或者直接拨号设备测试！</p>
-<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>下载 <a href="https://github.com/HMBSbige/NatTypeTester/releases">NatTypeTester</a>，如下检测方法，结果是Full Cone则为nat1。</p>
-<p><img src="/../images/image-fpsz.png" alt="img"></p>
-<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>使用python工具，pystun3。</p>
-<p>pystun3是pip包管理器安装，确保本机安装好了python3和pip</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install pystun3 <span class="comment"># 安装pystun3</span></span><br><span class="line"></span><br><span class="line">pystun3 <span class="comment"># 开始测试</span></span><br></pre></td></tr></table></figure>
-
-<p>结果如下，显示Full Cone则为nat1。</p>
-<p><img src="/../images/image-mfrk.png" alt="img"></p>
-<h2 id="安装natmap"><a href="#安装natmap" class="headerlink" title="安装natmap"></a>安装natmap</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -O /usr/bin/natmap https://github.com/heiher/natmap/releases/download/20240303/natmap-linux-arm64 &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/natmap</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="写入ddns脚本"><a href="#写入ddns脚本" class="headerlink" title="写入ddns脚本"></a>写入ddns脚本</h2><p>创建并授权</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">touch</span> /usr/bin/ddns_natmap &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/ddns_natmap</span><br></pre></td></tr></table></figure>
-
-<p>此ddns脚本需要使用jq</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install jq</span><br></pre></td></tr></table></figure>
-
-<p>复制下方脚本内容，使用nano写入&#x2F;usr&#x2F;bin&#x2F;ddns_natmap，需要的信息自行补充！</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消这个注释并修改[bark-key]可在ip和端口改变时获得ios的推送，需要在ios上安装bark app</span></span><br><span class="line"><span class="comment">#curl https://api.day.app/[bark-key]/nat穿透信息改变/$&#123;1&#125;:$&#123;2&#125;%0a$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="设置natmap打洞转发"><a href="#设置natmap打洞转发" class="headerlink" title="设置natmap打洞转发"></a>设置natmap打洞转发</h2><p>需修改一下自己的转发IP和端口，以及超时时间之类信息</p>
-<p><strong>-T 参数是超时时间，默认是120，这个设置其实还是比较重要的，比如通过natmap打洞的隧道连接ssh时，如果120秒空闲的话，会直接断开ssh连接，我一般设置成3600</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/systemd/system/natmap.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=natmap server</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=natmap -i eth0 -4 -s stunserver2024.stunprotocol.org -h qq.com -b [任意未使用端口或0(随机端口)] -t [转发的目标IP] -p [转发的目标端口] -T [超时时间秒] -e /usr/bin/ddns_natmap</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="设置开机自启"><a href="#设置开机自启" class="headerlink" title="设置开机自启"></a>设置开机自启</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start natmap.service</span><br><span class="line">systemctl <span class="built_in">enable</span> natmap.service</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="代理app解析使用"><a href="#代理app解析使用" class="headerlink" title="代理app解析使用"></a>代理app解析使用</h2><p>natmap上传的是<a href="https://github.com/heiher/natmap/wiki/faq#%E5%9F%9F%E5%90%8D%E8%AE%BF%E9%97%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84">IP4P格式</a>的IP，普通客户端无法识别，可在iOS上使用<a href="https://github.com/sub-store-org/Sub-Store/tree/master/config">sub-store</a>，或者<a href="https://xream.notion.site/Sub-Store-abe6a96944724dc6a36833d5c9ab7c87">服务器自建sub-store服务</a>来达到解析IP4P的效果！sub-store可以支持几乎所有客户端的转换！</p>
-<p><img src="/../images/image-ckxo.png" alt="img"></p>
-]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>lxc</tag>
-        <tag>内网穿透</tag>
       </tags>
   </entry>
   <entry>
@@ -452,6 +402,56 @@
       <tags>
         <tag>linux</tag>
         <tag>lxc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>公网IPV4的从无到有——natmap打洞</title>
+    <url>/posts/1357308105.html</url>
+    <content><![CDATA[<p>本文基于Debian而写。</p>
+<p>不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！</p>
+<span id="more"></span>
+
+<p><a href="https://sing-box.sagernet.org/installation/package-manager/"><em>singbox服务端一键搭建点我</em></a></p>
+<h2 id="检测自己的nat类型"><a href="#检测自己的nat类型" class="headerlink" title="检测自己的nat类型"></a>检测自己的nat类型</h2><p>检测前一定要最大限度减少本地nat，路由器开dmz，或者直接拨号设备测试！</p>
+<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>下载 <a href="https://github.com/HMBSbige/NatTypeTester/releases">NatTypeTester</a>，如下检测方法，结果是Full Cone则为nat1。</p>
+<p><img src="/../images/image-fpsz.png" alt="img"></p>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>使用python工具，pystun3。</p>
+<p>pystun3是pip包管理器安装，确保本机安装好了python3和pip</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install pystun3 <span class="comment"># 安装pystun3</span></span><br><span class="line"></span><br><span class="line">pystun3 <span class="comment"># 开始测试</span></span><br></pre></td></tr></table></figure>
+
+<p>结果如下，显示Full Cone则为nat1。</p>
+<p><img src="/../images/image-mfrk.png" alt="img"></p>
+<h2 id="安装natmap"><a href="#安装natmap" class="headerlink" title="安装natmap"></a>安装natmap</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -O /usr/bin/natmap https://github.com/heiher/natmap/releases/download/20240303/natmap-linux-arm64 &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/natmap</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="写入ddns脚本"><a href="#写入ddns脚本" class="headerlink" title="写入ddns脚本"></a>写入ddns脚本</h2><p>创建并授权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">touch</span> /usr/bin/ddns_natmap &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/ddns_natmap</span><br></pre></td></tr></table></figure>
+
+<p>此ddns脚本需要使用jq</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install jq</span><br></pre></td></tr></table></figure>
+
+<p>复制下方脚本内容，使用nano写入&#x2F;usr&#x2F;bin&#x2F;ddns_natmap，需要的信息自行补充！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消这个注释并修改[bark-key]可在ip和端口改变时获得ios的推送，需要在ios上安装bark app</span></span><br><span class="line"><span class="comment">#curl https://api.day.app/[bark-key]/nat穿透信息改变/$&#123;1&#125;:$&#123;2&#125;%0a$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置natmap打洞转发"><a href="#设置natmap打洞转发" class="headerlink" title="设置natmap打洞转发"></a>设置natmap打洞转发</h2><p>需修改一下自己的转发IP和端口，以及超时时间之类信息</p>
+<p><strong>-T 参数是超时时间，默认是120，这个设置其实还是比较重要的，比如通过natmap打洞的隧道连接ssh时，如果120秒空闲的话，会直接断开ssh连接，我一般设置成3600</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/systemd/system/natmap.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=natmap server</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=natmap -i eth0 -4 -s stunserver2024.stunprotocol.org -h qq.com -b [任意未使用端口或0(随机端口)] -t [转发的目标IP] -p [转发的目标端口] -T [超时时间秒] -e /usr/bin/ddns_natmap</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置开机自启"><a href="#设置开机自启" class="headerlink" title="设置开机自启"></a>设置开机自启</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start natmap.service</span><br><span class="line">systemctl <span class="built_in">enable</span> natmap.service</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="代理app解析使用"><a href="#代理app解析使用" class="headerlink" title="代理app解析使用"></a>代理app解析使用</h2><p>natmap上传的是<a href="https://github.com/heiher/natmap/wiki/faq#%E5%9F%9F%E5%90%8D%E8%AE%BF%E9%97%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84">IP4P格式</a>的IP，普通客户端无法识别，可在iOS上使用<a href="https://github.com/sub-store-org/Sub-Store/tree/master/config">sub-store</a>，或者<a href="https://xream.notion.site/Sub-Store-abe6a96944724dc6a36833d5c9ab7c87">服务器自建sub-store服务</a>来达到解析IP4P的效果！sub-store可以支持几乎所有客户端的转换！</p>
+<p><img src="/../images/image-ckxo.png" alt="img"></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>内网穿透</tag>
       </tags>
   </entry>
 </search>
