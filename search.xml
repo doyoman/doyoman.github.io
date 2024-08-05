@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>PVE下lxc中文乱码解决方法</title>
-    <url>/posts/592933762.html</url>
-    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
-<span id="more"></span>
-<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
-<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
-<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
-<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
-<p>enjoy！</p>
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>pve</category>
-        <category>lxc</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>pve - lxc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Arm机器基于debian的lxc容器初始化配置</title>
     <url>/posts/1826688815.html</url>
     <content><![CDATA[<p>自用的lxc容器初始化配置</p>
@@ -154,27 +131,27 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo密钥登录GitHub</title>
-    <url>/posts/3267584825.html</url>
-    <content><![CDATA[<p>hexo密钥登录GitHub</p>
+    <title>PVE下lxc中文乱码解决方法</title>
+    <url>/posts/592933762.html</url>
+    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
 <span id="more"></span>
-<h2 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
+<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
+<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
 
-<p>一路回车即可</p>
-<h2 id="打印出公钥"><a href="#打印出公钥" class="headerlink" title="打印出公钥"></a>打印出公钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-
-<p>将打印出的公钥添加到GitHub</p>
-<h2 id="测试是否连接成功"><a href="#测试是否连接成功" class="headerlink" title="测试是否连接成功"></a>测试是否连接成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-
-<h2 id="修改hexo-config-yml文件"><a href="#修改hexo-config-yml文件" class="headerlink" title="修改hexo _config.yml文件"></a>修改hexo _config.yml文件</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="enjoy！"><a href="#enjoy！" class="headerlink" title="enjoy！"></a>enjoy！</h3>]]></content>
+<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
+<p>enjoy！</p>
+]]></content>
       <categories>
         <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
       </categories>
       <tags>
         <tag>linux</tag>
-        <tag>hexo</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
       </tags>
   </entry>
   <entry>
@@ -205,6 +182,30 @@
       </tags>
   </entry>
   <entry>
+    <title>hexo密钥登录GitHub</title>
+    <url>/posts/3267584825.html</url>
+    <content><![CDATA[<p>hexo密钥登录GitHub</p>
+<span id="more"></span>
+<h2 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一路回车即可</p>
+<h2 id="打印出公钥"><a href="#打印出公钥" class="headerlink" title="打印出公钥"></a>打印出公钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<p>将打印出的公钥添加到GitHub</p>
+<h2 id="测试是否连接成功"><a href="#测试是否连接成功" class="headerlink" title="测试是否连接成功"></a>测试是否连接成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改hexo-config-yml文件"><a href="#修改hexo-config-yml文件" class="headerlink" title="修改hexo _config.yml文件"></a>修改hexo _config.yml文件</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="enjoy！"><a href="#enjoy！" class="headerlink" title="enjoy！"></a>enjoy！</h3>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>linux设置临时代理及清除</title>
     <url>/posts/697366212.html</url>
     <content><![CDATA[<p>记录一下linux机器代理的设置方法</p>
@@ -222,6 +223,97 @@
       </categories>
       <tags>
         <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>lxc安装桌面并且中文化</title>
+    <url>/posts/2567301303.html</url>
+    <content><![CDATA[<p>在PVE下安装debian模板的lxc容器，并安装xfce桌面，做好中文化！</p>
+<span id="more"></span>
+
+<p>如要驱动核显设备和挂载一些文件，最好使用特权容器，避免某些权限问题！</p>
+<p>lxc设置配置越高越好！</p>
+<h3 id="安装XFCE桌面"><a href="#安装XFCE桌面" class="headerlink" title="安装XFCE桌面"></a>安装XFCE桌面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasksel</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803122121194.png" alt="image-20240803122121194"></p>
+<h3 id="安装XRDP"><a href="#安装XRDP" class="headerlink" title="安装XRDP"></a>安装XRDP</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install xrdp -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="新建用户"><a href="#新建用户" class="headerlink" title="新建用户"></a>新建用户</h3><p>新建一个使用桌面的用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adduser &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="授予权限"><a href="#授予权限" class="headerlink" title="授予权限"></a>授予权限</h3><p>授予桌面登录权限和使用sudo的权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG audio,video,sudo &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="安装中文字体和输入法"><a href="#安装中文字体和输入法" class="headerlink" title="安装中文字体和输入法"></a>安装中文字体和输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install fonts-wqy-zenhei ibus ibus-pinyin -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置中文"><a href="#配置中文" class="headerlink" title="配置中文"></a>配置中文</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132440939.png" alt="image-20240803132440939"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132459694.png" alt="image-20240803132459694"></p>
+<h3 id="重启lxc"><a href="#重启lxc" class="headerlink" title="重启lxc"></a>重启lxc</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<p>重启之后使用win远程桌面使用新创建的用户登录即可！</p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132921308.png" alt="image-20240803132921308"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803133018707.png" alt="image-20240803133018707"></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openwrt使用natmap打洞及防火墙配置</title>
+    <url>/posts/184979697.html</url>
+    <content><![CDATA[<p>在openwrt主路由上使用natmap来实现内网穿透，达到近乎公网IP的体验！</p>
+<span id="more"></span>
+
+<p>首先openwrt需要是NAT1环境才行，家宽几乎都是。</p>
+<h3 id="安装luci-app-natmap"><a href="#安装luci-app-natmap" class="headerlink" title="安装luci-app-natmap"></a>安装luci-app-natmap</h3><p>从这个链接下载ipk文件安装，或者openwrt包管理器安装</p>
+<p><a href="https://github.com/blueberry-pie-11/luci-app-natmap/releases">luci-app-natmap下载链接(不一定适配所有机器)</a></p>
+<h3 id="创建通知脚本"><a href="#创建通知脚本" class="headerlink" title="创建通知脚本"></a>创建通知脚本</h3><p>创建一个shell脚本，实现需要的所有功能，如ddns，上传到substore，修改防火墙规则，发送通知等…</p>
+<p>脚本位置可放在&#x2F;root&#x2F;ddns_natmap.sh</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /root/ddns_natmap.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以下为脚本内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cloudflare ddns</span></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改openwrt防火墙</span></span><br><span class="line">rule_name=<span class="string">&quot;natmap&quot;</span> <span class="comment">#防火墙规则名称</span></span><br><span class="line">dest_port=<span class="string">&quot;<span class="variable">$&#123;4&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> ! uci show firewall | grep -q <span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">    uci add firewall rule</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].name=<span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].target=<span class="string">&#x27;ACCEPT&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].src=<span class="string">&#x27;wan&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].family=<span class="string">&#x27;ipv4&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	rule_num=$(uci show firewall | grep <span class="variable">$&#123;rule_name&#125;</span> | awk -F<span class="string">&#x27;[][]&#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[<span class="variable">$&#123;rule_num&#125;</span>].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传到substore  可浏览器F12抓包直接获取curl (api示例)</span></span><br><span class="line">curl --location --request PATCH <span class="string">&#x27;http://192.168.1.100:3001/aaa/api/sub/natmap&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;natmap&quot;,</span></span><br><span class="line"><span class="string">    &quot;displayName&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;mergeSources&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;ignoreFailedRemoteSub&quot;: false,</span></span><br><span class="line"><span class="string">    &quot;icon&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;process&quot;: [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            &quot;type&quot;: &quot;Quick Setting Operator&quot;,</span></span><br><span class="line"><span class="string">            &quot;args&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;useless&quot;: &quot;DISABLED&quot;,</span></span><br><span class="line"><span class="string">                &quot;udp&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;scert&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;tfo&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;vmess aead&quot;: &quot;DEFAULT&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    ],</span></span><br><span class="line"><span class="string">    &quot;source&quot;: &quot;local&quot;,</span></span><br><span class="line"><span class="string">    &quot;url&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;content&quot;: &quot;home_ss_v4 = Shadowsocks,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;,aes-128-gcm,\&quot;&lt;uuid&gt;\&quot;,fast-open=false,udp=true&quot;,</span></span><br><span class="line"><span class="string">    &quot;ua&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;display-name&quot;: &quot;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送IP及端口信息到外部数据库存储 (api示例)</span></span><br><span class="line">curl --location --request PUT <span class="string">&#x27;https://&lt;domain&gt;/?token=aaa&amp;key=bbb&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;ip&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;&quot;,</span></span><br><span class="line"><span class="string">    &quot;port&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送bark通知 (api示例)</span></span><br><span class="line">curl https://api.day.app/&lt;barkToken&gt;/nat穿透信息已更改/<span class="variable">$&#123;1&#125;</span>:<span class="variable">$&#123;2&#125;</span>%0a<span class="variable">$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>创建完授予执行权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /root/ddns_natmap.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置natmap"><a href="#配置natmap" class="headerlink" title="配置natmap"></a>配置natmap</h3><p>如图配置</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805144503358.png" alt="image-20240805144503358"></p>
+<p>打洞成功，应能如下图显示！</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805144628170.png" alt="image-20240805144628170"></p>
+<p>在网络-防火墙-通信规则中，应有如下规则</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805152514192.png" alt="image-20240805152514192"></p>
+]]></content>
+      <categories>
+        <category>openwrt</category>
+        <category>natmap</category>
+        <category>内网穿透</category>
+      </categories>
+      <tags>
+        <tag>openwrt</tag>
+        <tag>natmap</tag>
+        <tag>内网穿透</tag>
       </tags>
   </entry>
   <entry>
@@ -278,6 +370,38 @@
       </tags>
   </entry>
   <entry>
+    <title>使用watchtower自动更新容器</title>
+    <url>/posts/527465299.html</url>
+    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
+<span id="more"></span>
+
+<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>为小存储空间机器拓展空间的方法</title>
     <url>/posts/2933134504.html</url>
     <content><![CDATA[<p>部分机器本身存储空间很小，但是又想玩docker、lxc等占用空间的东西，可以采用此方法！</p>
@@ -314,88 +438,6 @@
 <p>建立软链接</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /mnt/sda1/lxc /var/lib/lxc</span><br></pre></td></tr></table></figure>
 ]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>lxc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用watchtower自动更新容器</title>
-    <url>/posts/527465299.html</url>
-    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
-<span id="more"></span>
-
-<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>超低配Arm机器使用lxc容器的最佳方案</title>
-    <url>/posts/4215636886.html</url>
-    <content><![CDATA[<p>适用于大部分低配arm机器，如N1，甚至是410随身WiFi（需要有带有线网卡拓展坞，无线网卡无法开网桥），实现在低配机器上轻松AIO！部分代码取自Cooip！</p>
-<span id="more"></span>
-
-<h2 id="更新apt并安装lxc"><a href="#更新apt并安装lxc" class="headerlink" title="更新apt并安装lxc"></a>更新apt并安装lxc</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update &amp;&amp; apt upgrade &amp;&amp; apt install lxc -y</span><br><span class="line">lxc-checkconfig</span><br></pre></td></tr></table></figure>
-
-<p>看到有一长溜输出即可！</p>
-<h2 id="查看网桥是否创建成功"><a href="#查看网桥是否创建成功" class="headerlink" title="查看网桥是否创建成功"></a>查看网桥是否创建成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
-
-<p>一般来说，安装好lxc之后已经自动创建好网桥(lxcbr0)了，如果没有，就需要手动创建网桥</p>
-<h2 id="建立第一个模版lxc容器"><a href="#建立第一个模版lxc容器" class="headerlink" title="建立第一个模版lxc容器"></a>建立第一个模版lxc容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-create --name template --template download -- --dist debian --release bookworm --<span class="built_in">arch</span> arm64 --server mirrors.bfsu.edu.cn/lxc-images</span><br></pre></td></tr></table></figure>
-
-<p>会从远程下载最新debian12的rootfs建立lxc容器</p>
-<h2 id="编辑lxc容器配置文件"><a href="#编辑lxc容器配置文件" class="headerlink" title="编辑lxc容器配置文件"></a>编辑lxc容器配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> &gt; /var/lib/lxc/template/config &amp;&amp; nano /var/lib/lxc/template/config</span><br></pre></td></tr></table></figure>
-
-<p>复制下方配置文件，粘贴到打开的文件中，按需修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.include = /usr/share/lxc/config/common.conf</span><br><span class="line">lxc.arch = linux64</span><br><span class="line"></span><br><span class="line"><span class="comment"># Container specific configuration</span></span><br><span class="line">lxc.apparmor.profile = generated</span><br><span class="line">lxc.apparmor.allow_nesting = 1</span><br><span class="line">lxc.rootfs.path = <span class="built_in">dir</span>:/var/lib/lxc/template/rootfs</span><br><span class="line">lxc.uts.name = template</span><br><span class="line">lxc.start.auto = 1</span><br><span class="line">lxc.start.delay = 15</span><br><span class="line">lxc.group = onboot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡1</span></span><br><span class="line">lxc.net.0.type = veth</span><br><span class="line">lxc.net.0.link = lxcbr0</span><br><span class="line">lxc.net.0.flags = up</span><br><span class="line">lxc.net.0.hwaddr = 36:b0:b9:cf:2e:4g</span><br><span class="line">lxc.net.0.name = eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡2 每添加一块虚拟网卡需改动一下mac使其不同，可加n个网卡</span></span><br><span class="line"><span class="comment">#lxc.net.1.type = veth</span></span><br><span class="line"><span class="comment">#lxc.net.1.link = lxcbr0</span></span><br><span class="line"><span class="comment">#lxc.net.1.flags = up</span></span><br><span class="line"><span class="comment">#lxc.net.1.hwaddr = 36:b0:b9:cf:2e:4f</span></span><br><span class="line"><span class="comment">#lxc.net.1.name = eth1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂载tun，如需搭建tailscale、mihomo之类需要依赖tun的可移除下方两条注释</span></span><br><span class="line"><span class="comment">#lxc.cgroup2.devices.allow = c 10:200 rwm</span></span><br><span class="line"><span class="comment">#lxc.mount.entry = /dev/net/tun dev/net/tun none bind,create=file</span></span><br></pre></td></tr></table></figure>
-
-<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
-<h2 id="启动并进入容器，初始化一下通用基本配置"><a href="#启动并进入容器，初始化一下通用基本配置" class="headerlink" title="启动并进入容器，初始化一下通用基本配置"></a>启动并进入容器，初始化一下通用基本配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-start template &amp;&amp; lxc-attach template </span><br></pre></td></tr></table></figure>
-
-<p>初始化配置看<a href="">这篇文章</a></p>
-<p>配置完以后按ctrl + d退出容器</p>
-<p>然后停止模版容器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-stop template</span><br></pre></td></tr></table></figure>
-
-<h2 id="基于模版复制容器，自定义一下名称"><a href="#基于模版复制容器，自定义一下名称" class="headerlink" title="基于模版复制容器，自定义一下名称"></a>基于模版复制容器，自定义一下名称</h2><p>一定要模板处于停止状态才能复制！！！</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-copy -n template -N newname</span><br></pre></td></tr></table></figure>
-
-<h2 id="按需修改新容器配置文件"><a href="#按需修改新容器配置文件" class="headerlink" title="按需修改新容器配置文件"></a>按需修改新容器配置文件</h2><p>或者不改启动lxc直接玩，反正主机名和mac地址在复制中会改好</p>
-<h2 id="设置服务文件开机自启，debian为例"><a href="#设置服务文件开机自启，debian为例" class="headerlink" title="设置服务文件开机自启，debian为例"></a>设置服务文件开机自启，debian为例</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/systemd/system/lxc-start.service</span><br></pre></td></tr></table></figure>
-
-<p>复制下方配置文件粘贴进去</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=<span class="string">&quot;LXC autostart for lxc user&quot;</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/lxc-autostart --all</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=default.target</span><br></pre></td></tr></table></figure>
-
-<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
-<p>设置开机自启</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> lxc-start.service</span><br><span class="line">systemctl start lxc-start.service</span><br><span class="line">systemctl status lxc-start.service</span><br></pre></td></tr></table></figure>
-
-<h2 id="lxc容器常用命令"><a href="#lxc容器常用命令" class="headerlink" title="lxc容器常用命令"></a>lxc容器常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-attach name  <span class="comment">#进入lxc</span></span><br><span class="line">lxc-start name  <span class="comment">#启动lxc</span></span><br><span class="line">lxc-stop name  <span class="comment">#停止lxc</span></span><br><span class="line">lxc-destroy name  <span class="comment">#销毁lxc</span></span><br><span class="line">lxc-ls name <span class="comment">#列出所有lxc，可加-f查看详情</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>linux</category>
       </categories>
@@ -452,6 +494,56 @@
         <tag>linux</tag>
         <tag>lxc</tag>
         <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>超低配Arm机器使用lxc容器的最佳方案</title>
+    <url>/posts/4215636886.html</url>
+    <content><![CDATA[<p>适用于大部分低配arm机器，如N1，甚至是410随身WiFi（需要有带有线网卡拓展坞，无线网卡无法开网桥），实现在低配机器上轻松AIO！部分代码取自Cooip！</p>
+<span id="more"></span>
+
+<h2 id="更新apt并安装lxc"><a href="#更新apt并安装lxc" class="headerlink" title="更新apt并安装lxc"></a>更新apt并安装lxc</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update &amp;&amp; apt upgrade &amp;&amp; apt install lxc -y</span><br><span class="line">lxc-checkconfig</span><br></pre></td></tr></table></figure>
+
+<p>看到有一长溜输出即可！</p>
+<h2 id="查看网桥是否创建成功"><a href="#查看网桥是否创建成功" class="headerlink" title="查看网桥是否创建成功"></a>查看网桥是否创建成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+
+<p>一般来说，安装好lxc之后已经自动创建好网桥(lxcbr0)了，如果没有，就需要手动创建网桥</p>
+<h2 id="建立第一个模版lxc容器"><a href="#建立第一个模版lxc容器" class="headerlink" title="建立第一个模版lxc容器"></a>建立第一个模版lxc容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-create --name template --template download -- --dist debian --release bookworm --<span class="built_in">arch</span> arm64 --server mirrors.bfsu.edu.cn/lxc-images</span><br></pre></td></tr></table></figure>
+
+<p>会从远程下载最新debian12的rootfs建立lxc容器</p>
+<h2 id="编辑lxc容器配置文件"><a href="#编辑lxc容器配置文件" class="headerlink" title="编辑lxc容器配置文件"></a>编辑lxc容器配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> &gt; /var/lib/lxc/template/config &amp;&amp; nano /var/lib/lxc/template/config</span><br></pre></td></tr></table></figure>
+
+<p>复制下方配置文件，粘贴到打开的文件中，按需修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.include = /usr/share/lxc/config/common.conf</span><br><span class="line">lxc.arch = linux64</span><br><span class="line"></span><br><span class="line"><span class="comment"># Container specific configuration</span></span><br><span class="line">lxc.apparmor.profile = generated</span><br><span class="line">lxc.apparmor.allow_nesting = 1</span><br><span class="line">lxc.rootfs.path = <span class="built_in">dir</span>:/var/lib/lxc/template/rootfs</span><br><span class="line">lxc.uts.name = template</span><br><span class="line">lxc.start.auto = 1</span><br><span class="line">lxc.start.delay = 15</span><br><span class="line">lxc.group = onboot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡1</span></span><br><span class="line">lxc.net.0.type = veth</span><br><span class="line">lxc.net.0.link = lxcbr0</span><br><span class="line">lxc.net.0.flags = up</span><br><span class="line">lxc.net.0.hwaddr = 36:b0:b9:cf:2e:4g</span><br><span class="line">lxc.net.0.name = eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡2 每添加一块虚拟网卡需改动一下mac使其不同，可加n个网卡</span></span><br><span class="line"><span class="comment">#lxc.net.1.type = veth</span></span><br><span class="line"><span class="comment">#lxc.net.1.link = lxcbr0</span></span><br><span class="line"><span class="comment">#lxc.net.1.flags = up</span></span><br><span class="line"><span class="comment">#lxc.net.1.hwaddr = 36:b0:b9:cf:2e:4f</span></span><br><span class="line"><span class="comment">#lxc.net.1.name = eth1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂载tun，如需搭建tailscale、mihomo之类需要依赖tun的可移除下方两条注释</span></span><br><span class="line"><span class="comment">#lxc.cgroup2.devices.allow = c 10:200 rwm</span></span><br><span class="line"><span class="comment">#lxc.mount.entry = /dev/net/tun dev/net/tun none bind,create=file</span></span><br></pre></td></tr></table></figure>
+
+<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
+<h2 id="启动并进入容器，初始化一下通用基本配置"><a href="#启动并进入容器，初始化一下通用基本配置" class="headerlink" title="启动并进入容器，初始化一下通用基本配置"></a>启动并进入容器，初始化一下通用基本配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-start template &amp;&amp; lxc-attach template </span><br></pre></td></tr></table></figure>
+
+<p>初始化配置看<a href="">这篇文章</a></p>
+<p>配置完以后按ctrl + d退出容器</p>
+<p>然后停止模版容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-stop template</span><br></pre></td></tr></table></figure>
+
+<h2 id="基于模版复制容器，自定义一下名称"><a href="#基于模版复制容器，自定义一下名称" class="headerlink" title="基于模版复制容器，自定义一下名称"></a>基于模版复制容器，自定义一下名称</h2><p>一定要模板处于停止状态才能复制！！！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-copy -n template -N newname</span><br></pre></td></tr></table></figure>
+
+<h2 id="按需修改新容器配置文件"><a href="#按需修改新容器配置文件" class="headerlink" title="按需修改新容器配置文件"></a>按需修改新容器配置文件</h2><p>或者不改启动lxc直接玩，反正主机名和mac地址在复制中会改好</p>
+<h2 id="设置服务文件开机自启，debian为例"><a href="#设置服务文件开机自启，debian为例" class="headerlink" title="设置服务文件开机自启，debian为例"></a>设置服务文件开机自启，debian为例</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/systemd/system/lxc-start.service</span><br></pre></td></tr></table></figure>
+
+<p>复制下方配置文件粘贴进去</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=<span class="string">&quot;LXC autostart for lxc user&quot;</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/lxc-autostart --all</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=default.target</span><br></pre></td></tr></table></figure>
+
+<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
+<p>设置开机自启</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> lxc-start.service</span><br><span class="line">systemctl start lxc-start.service</span><br><span class="line">systemctl status lxc-start.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="lxc容器常用命令"><a href="#lxc容器常用命令" class="headerlink" title="lxc容器常用命令"></a>lxc容器常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-attach name  <span class="comment">#进入lxc</span></span><br><span class="line">lxc-start name  <span class="comment">#启动lxc</span></span><br><span class="line">lxc-stop name  <span class="comment">#停止lxc</span></span><br><span class="line">lxc-destroy name  <span class="comment">#销毁lxc</span></span><br><span class="line">lxc-ls name <span class="comment">#列出所有lxc，可加-f查看详情</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
       </tags>
   </entry>
 </search>
