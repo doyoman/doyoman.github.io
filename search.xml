@@ -108,53 +108,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PVE创建lxc的openwrt容器</title>
-    <url>/posts/826300242.html</url>
-    <content><![CDATA[<p>在PVE中创建lxc的openwrt容器，更节省资源！</p>
-<span id="more"></span>
-
-<h2 id="下载openwrt的rootfs"><a href="#下载openwrt的rootfs" class="headerlink" title="下载openwrt的rootfs"></a>下载openwrt的rootfs</h2><p>不知道哪里有适用自己机器架构的openwrt rootfs文件的可以去<a href="https://downloads.openwrt.org/releases/23.05.3/targets/" title="点我去openwrt官网下载页">openwrt官网</a>下载</p>
-<p>op官网的固件很简洁，甚至要自己安装中文语言包，最好找适合自己的rootfs。</p>
-<h2 id="命令行创建openwrt-lxc"><a href="#命令行创建openwrt-lxc" class="headerlink" title="命令行创建openwrt lxc"></a>命令行创建openwrt lxc</h2><p>openwrt无法在webui中创建，只能通过命令创建。<br>修改以下命令的[]参数为自己对应的。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create [lxc-id] <span class="built_in">local</span>:vztmpl/[openwrt的rootfs文件名称] \</span><br><span class="line">--rootfs local-lvm:[分配的空间大小，单位 G] \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname [lxc名称] \</span><br><span class="line">--<span class="built_in">arch</span> [机器架构 amd64/arm64] \</span><br><span class="line">--cores [分配几个核心] \</span><br><span class="line">--memory [分配内存大小] \</span><br><span class="line">--swap [分配swap大小] \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br><span class="line">-net1 bridge=vmbr0,name=eth1</span><br><span class="line"><span class="comment"># 多网口可按需配置，要几个加几个</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="示例配置"><a href="#示例配置" class="headerlink" title="示例配置"></a>示例配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 121 <span class="built_in">local</span>:vztmpl/immortalwrt-x86-64-generic-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:4 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname immortalwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>lxc</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>lxc</tag>
-        <tag>openwrt</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PVE下lxc中文乱码解决方法</title>
-    <url>/posts/592933762.html</url>
-    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
-<span id="more"></span>
-<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
-<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
-<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
-<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
-<p>enjoy！</p>
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>pve</category>
-        <category>lxc</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>lxc</tag>
-        <tag>pve</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>golang笔记</title>
     <url>/posts/1059068992.html</url>
     <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
@@ -182,27 +135,27 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo密钥登录GitHub</title>
-    <url>/posts/3267584825.html</url>
-    <content><![CDATA[<p>hexo密钥登录GitHub</p>
+    <title>PVE下lxc中文乱码解决方法</title>
+    <url>/posts/592933762.html</url>
+    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
 <span id="more"></span>
-<h2 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
+<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
+<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
 
-<p>一路回车即可</p>
-<h2 id="打印出公钥"><a href="#打印出公钥" class="headerlink" title="打印出公钥"></a>打印出公钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-
-<p>将打印出的公钥添加到GitHub</p>
-<h2 id="测试是否连接成功"><a href="#测试是否连接成功" class="headerlink" title="测试是否连接成功"></a>测试是否连接成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-
-<h2 id="修改hexo-config-yml文件"><a href="#修改hexo-config-yml文件" class="headerlink" title="修改hexo _config.yml文件"></a>修改hexo _config.yml文件</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="enjoy！"><a href="#enjoy！" class="headerlink" title="enjoy！"></a>enjoy！</h3>]]></content>
+<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
+<p>enjoy！</p>
+]]></content>
       <categories>
         <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
       </categories>
       <tags>
         <tag>linux</tag>
-        <tag>hexo</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
       </tags>
   </entry>
   <entry>
@@ -274,6 +227,53 @@
       </tags>
   </entry>
   <entry>
+    <title>hexo密钥登录GitHub</title>
+    <url>/posts/3267584825.html</url>
+    <content><![CDATA[<p>hexo密钥登录GitHub</p>
+<span id="more"></span>
+<h2 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一路回车即可</p>
+<h2 id="打印出公钥"><a href="#打印出公钥" class="headerlink" title="打印出公钥"></a>打印出公钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<p>将打印出的公钥添加到GitHub</p>
+<h2 id="测试是否连接成功"><a href="#测试是否连接成功" class="headerlink" title="测试是否连接成功"></a>测试是否连接成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改hexo-config-yml文件"><a href="#修改hexo-config-yml文件" class="headerlink" title="修改hexo _config.yml文件"></a>修改hexo _config.yml文件</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="enjoy！"><a href="#enjoy！" class="headerlink" title="enjoy！"></a>enjoy！</h3>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PVE创建lxc的openwrt容器</title>
+    <url>/posts/826300242.html</url>
+    <content><![CDATA[<p>在PVE中创建lxc的openwrt容器，更节省资源！</p>
+<span id="more"></span>
+
+<h2 id="下载openwrt的rootfs"><a href="#下载openwrt的rootfs" class="headerlink" title="下载openwrt的rootfs"></a>下载openwrt的rootfs</h2><p>不知道哪里有适用自己机器架构的openwrt rootfs文件的可以去<a href="https://downloads.openwrt.org/releases/23.05.3/targets/" title="点我去openwrt官网下载页">openwrt官网</a>下载</p>
+<p>op官网的固件很简洁，甚至要自己安装中文语言包，最好找适合自己的rootfs。</p>
+<h2 id="命令行创建openwrt-lxc"><a href="#命令行创建openwrt-lxc" class="headerlink" title="命令行创建openwrt lxc"></a>命令行创建openwrt lxc</h2><p>openwrt无法在webui中创建，只能通过命令创建。<br>修改以下命令的[]参数为自己对应的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create [lxc-id] <span class="built_in">local</span>:vztmpl/[openwrt的rootfs文件名称] \</span><br><span class="line">--rootfs local-lvm:[分配的空间大小，单位 G] \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname [lxc名称] \</span><br><span class="line">--<span class="built_in">arch</span> [机器架构 amd64/arm64] \</span><br><span class="line">--cores [分配几个核心] \</span><br><span class="line">--memory [分配内存大小] \</span><br><span class="line">--swap [分配swap大小] \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br><span class="line">-net1 bridge=vmbr0,name=eth1</span><br><span class="line"><span class="comment"># 多网口可按需配置，要几个加几个</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="示例配置"><a href="#示例配置" class="headerlink" title="示例配置"></a>示例配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 121 <span class="built_in">local</span>:vztmpl/immortalwrt-x86-64-generic-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:4 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname immortalwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>openwrt</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>openwrt使用natmap打洞及防火墙配置</title>
     <url>/posts/184979697.html</url>
     <content><![CDATA[<p>在openwrt主路由上使用natmap来实现内网穿透，达到近乎公网IP的体验！</p>
@@ -289,7 +289,7 @@
 
 
 <p>以下为脚本内容：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cloudflare ddns</span></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改openwrt防火墙</span></span><br><span class="line">rule_name=<span class="string">&quot;natmap&quot;</span> <span class="comment">#防火墙规则名称</span></span><br><span class="line">dest_port=<span class="string">&quot;<span class="variable">$&#123;4&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> ! uci show firewall | grep -q <span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">    uci add firewall rule</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].name=<span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].target=<span class="string">&#x27;ACCEPT&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].src=<span class="string">&#x27;wan&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].family=<span class="string">&#x27;ipv4&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	rule_num=$(uci show firewall | grep <span class="variable">$&#123;rule_name&#125;</span> | awk -F<span class="string">&#x27;[][]&#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[<span class="variable">$&#123;rule_num&#125;</span>].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传到substore  可浏览器F12抓包直接获取curl (api示例)</span></span><br><span class="line">curl --location --request PATCH <span class="string">&#x27;http://192.168.1.100:3001/aaa/api/sub/natmap&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;natmap&quot;,</span></span><br><span class="line"><span class="string">    &quot;displayName&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;mergeSources&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;ignoreFailedRemoteSub&quot;: false,</span></span><br><span class="line"><span class="string">    &quot;icon&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;process&quot;: [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            &quot;type&quot;: &quot;Quick Setting Operator&quot;,</span></span><br><span class="line"><span class="string">            &quot;args&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;useless&quot;: &quot;DISABLED&quot;,</span></span><br><span class="line"><span class="string">                &quot;udp&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;scert&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;tfo&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;vmess aead&quot;: &quot;DEFAULT&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    ],</span></span><br><span class="line"><span class="string">    &quot;source&quot;: &quot;local&quot;,</span></span><br><span class="line"><span class="string">    &quot;url&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;content&quot;: &quot;home_ss_v4 = Shadowsocks,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;,aes-128-gcm,\&quot;&lt;uuid&gt;\&quot;,fast-open=false,udp=true&quot;,</span></span><br><span class="line"><span class="string">    &quot;ua&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;display-name&quot;: &quot;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送IP及端口信息到外部数据库存储 (api示例)</span></span><br><span class="line">curl --location --request PUT <span class="string">&#x27;https://&lt;domain&gt;/?token=aaa&amp;key=bbb&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;ip&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;&quot;,</span></span><br><span class="line"><span class="string">    &quot;port&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送bark通知 (api示例)</span></span><br><span class="line">curl https://api.day.app/&lt;barkToken&gt;/nat穿透信息已更改/<span class="variable">$&#123;1&#125;</span>:<span class="variable">$&#123;2&#125;</span>%0a<span class="variable">$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cloudflare ddns</span></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改openwrt防火墙</span></span><br><span class="line">rule_name=<span class="string">&quot;natmap&quot;</span> <span class="comment">#防火墙规则名称</span></span><br><span class="line">dest_port=<span class="string">&quot;<span class="variable">$&#123;4&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> ! uci show firewall | grep -q <span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">    uci add firewall rule</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].name=<span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].target=<span class="string">&#x27;ACCEPT&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].src=<span class="string">&#x27;wan&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].family=<span class="string">&#x27;ipv4&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    rule_num=$(uci show firewall | grep <span class="variable">$&#123;rule_name&#125;</span> | awk -F<span class="string">&#x27;[][]&#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[<span class="variable">$&#123;rule_num&#125;</span>].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传到substore  可浏览器F12抓包直接获取curl (api示例)</span></span><br><span class="line">curl --location --request PATCH <span class="string">&#x27;http://192.168.1.100:3001/aaa/api/sub/natmap&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;natmap&quot;,</span></span><br><span class="line"><span class="string">    &quot;displayName&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;mergeSources&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;ignoreFailedRemoteSub&quot;: false,</span></span><br><span class="line"><span class="string">    &quot;icon&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;process&quot;: [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            &quot;type&quot;: &quot;Quick Setting Operator&quot;,</span></span><br><span class="line"><span class="string">            &quot;args&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;useless&quot;: &quot;DISABLED&quot;,</span></span><br><span class="line"><span class="string">                &quot;udp&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;scert&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;tfo&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;vmess aead&quot;: &quot;DEFAULT&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    ],</span></span><br><span class="line"><span class="string">    &quot;source&quot;: &quot;local&quot;,</span></span><br><span class="line"><span class="string">    &quot;url&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;content&quot;: &quot;home_ss_v4 = Shadowsocks,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;,aes-128-gcm,\&quot;&lt;uuid&gt;\&quot;,fast-open=false,udp=true&quot;,</span></span><br><span class="line"><span class="string">    &quot;ua&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;display-name&quot;: &quot;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送IP及端口信息到外部数据库存储 (api示例)</span></span><br><span class="line">curl --location --request PUT <span class="string">&#x27;https://&lt;domain&gt;/?token=aaa&amp;key=bbb&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;ip&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;&quot;,</span></span><br><span class="line"><span class="string">    &quot;port&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送bark通知 (api示例)</span></span><br><span class="line">curl https://api.day.app/&lt;barkToken&gt;/nat穿透信息已更改/<span class="variable">$&#123;1&#125;</span>:<span class="variable">$&#123;2&#125;</span>%0a<span class="variable">$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
 
 
 
@@ -345,28 +345,6 @@
       <tags>
         <tag>linux</tag>
         <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>为debian添加rc.local开机自启服务</title>
-    <url>/posts/2550623555.html</url>
-    <content><![CDATA[<p>debian11及以上没有rc.local这个开机自启文件了，某些时候有些许不便，但是我们可以把它加回来！</p>
-<span id="more"></span>
-<h2 id="写入rc-local文件"><a href="#写入rc-local文件" class="headerlink" title="写入rc.local文件"></a>写入rc.local文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/rc.local &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh -e</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># rc.local</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="string"># Make sure that the script will &quot;exit 0&quot; on success or any other</span></span><br><span class="line"><span class="string"># value on error.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="string"># bits.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># By default this script does nothing.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exit 0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<p>可以在“exit 0”之上添加需要开机执行的命令。</p>
-<h3 id="授予执行权限"><a href="#授予执行权限" class="headerlink" title="授予执行权限"></a>授予执行权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /etc/rc.local</span><br></pre></td></tr></table></figure>
-
-<h2 id="写入systemd文件"><a href="#写入systemd文件" class="headerlink" title="写入systemd文件"></a>写入systemd文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /lib/systemd/system/rc-local.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=/etc/rc.local Compatibility</span></span><br><span class="line"><span class="string">Documentation=man:systemd-rc-local-generator(8)</span></span><br><span class="line"><span class="string">ConditionFileIsExecutable=/etc/rc.local</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">ExecStart=/etc/rc.local start</span></span><br><span class="line"><span class="string">TimeoutSec=0</span></span><br><span class="line"><span class="string">RemainAfterExit=yes</span></span><br><span class="line"><span class="string">GuessMainPID=no</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="重载配置以及设置rc-local开机自启"><a href="#重载配置以及设置rc-local开机自启" class="headerlink" title="重载配置以及设置rc.local开机自启"></a>重载配置以及设置rc.local开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rc-local.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rc-local.service</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -444,6 +422,28 @@
       <tags>
         <tag>linux</tag>
         <tag>lxc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为debian添加rc.local开机自启服务</title>
+    <url>/posts/2550623555.html</url>
+    <content><![CDATA[<p>debian11及以上没有rc.local这个开机自启文件了，某些时候有些许不便，但是我们可以把它加回来！</p>
+<span id="more"></span>
+<h2 id="写入rc-local文件"><a href="#写入rc-local文件" class="headerlink" title="写入rc.local文件"></a>写入rc.local文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/rc.local &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh -e</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># rc.local</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="string"># Make sure that the script will &quot;exit 0&quot; on success or any other</span></span><br><span class="line"><span class="string"># value on error.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="string"># bits.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># By default this script does nothing.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exit 0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>可以在“exit 0”之上添加需要开机执行的命令。</p>
+<h3 id="授予执行权限"><a href="#授予执行权限" class="headerlink" title="授予执行权限"></a>授予执行权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<h2 id="写入systemd文件"><a href="#写入systemd文件" class="headerlink" title="写入systemd文件"></a>写入systemd文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /lib/systemd/system/rc-local.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=/etc/rc.local Compatibility</span></span><br><span class="line"><span class="string">Documentation=man:systemd-rc-local-generator(8)</span></span><br><span class="line"><span class="string">ConditionFileIsExecutable=/etc/rc.local</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">ExecStart=/etc/rc.local start</span></span><br><span class="line"><span class="string">TimeoutSec=0</span></span><br><span class="line"><span class="string">RemainAfterExit=yes</span></span><br><span class="line"><span class="string">GuessMainPID=no</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重载配置以及设置rc-local开机自启"><a href="#重载配置以及设置rc-local开机自启" class="headerlink" title="重载配置以及设置rc.local开机自启"></a>重载配置以及设置rc.local开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rc-local.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rc-local.service</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
