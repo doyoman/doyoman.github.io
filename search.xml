@@ -226,6 +226,54 @@
       </tags>
   </entry>
   <entry>
+    <title>lxc安装桌面并且中文化</title>
+    <url>/posts/2567301303.html</url>
+    <content><![CDATA[<p>在PVE下安装debian模板的lxc容器，并安装xfce桌面，做好中文化！</p>
+<span id="more"></span>
+
+<p>如要驱动核显设备和挂载一些文件，最好使用特权容器，避免某些权限问题！</p>
+<p>lxc设置配置越高越好！</p>
+<h3 id="安装XFCE桌面"><a href="#安装XFCE桌面" class="headerlink" title="安装XFCE桌面"></a>安装XFCE桌面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasksel</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803122121194.png" alt="image-20240803122121194"></p>
+<h3 id="安装XRDP"><a href="#安装XRDP" class="headerlink" title="安装XRDP"></a>安装XRDP</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install xrdp -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="新建用户"><a href="#新建用户" class="headerlink" title="新建用户"></a>新建用户</h3><p>新建一个使用桌面的用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adduser &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="授予权限"><a href="#授予权限" class="headerlink" title="授予权限"></a>授予权限</h3><p>授予桌面登录权限和使用sudo的权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG audio,video,sudo &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="安装中文字体和输入法"><a href="#安装中文字体和输入法" class="headerlink" title="安装中文字体和输入法"></a>安装中文字体和输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install fonts-wqy-zenhei ibus ibus-pinyin -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置中文"><a href="#配置中文" class="headerlink" title="配置中文"></a>配置中文</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132440939.png" alt="image-20240803132440939"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132459694.png" alt="image-20240803132459694"></p>
+<h3 id="重启lxc"><a href="#重启lxc" class="headerlink" title="重启lxc"></a>重启lxc</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<p>重启之后使用win远程桌面使用新创建的用户登录即可！</p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132921308.png" alt="image-20240803132921308"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803133018707.png" alt="image-20240803133018707"></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>openwrt使用natmap打洞及防火墙配置</title>
     <url>/posts/184979697.html</url>
     <content><![CDATA[<p>在openwrt主路由上使用natmap来实现内网穿透，达到近乎公网IP的体验！</p>
@@ -275,13 +323,13 @@
 <span id="more"></span>
 
 <h3 id="搭建openwrt-lxc"><a href="#搭建openwrt-lxc" class="headerlink" title="搭建openwrt lxc"></a>搭建openwrt lxc</h3><p>直接命令创建lxc容器，不传递网卡参数</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 119 <span class="built_in">local</span>:vztmpl/openwrt-23.05.4-x86-64-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:8 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname openwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br><span class="line">--unprivileged 1</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 119 <span class="built_in">local</span>:vztmpl/openwrt-23.05.4-x86-64-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:8 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname openwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br></pre></td></tr></table></figure>
 
 <p>修改lxc配置文件</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/119.conf</span><br></pre></td></tr></table></figure>
 
 <p>增加直通网卡及pppoe拨号设备和tun设备，直通网卡的指令顺序不能乱，否则启动openwrt失败或者会导致name参数不传递！！！</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 第一个直通网卡</span></span><br><span class="line">lxc.net.0.type: phys</span><br><span class="line">lxc.net.0.link: enp2s0</span><br><span class="line">lxc.net.0.name: eth0</span><br><span class="line">lxc.net.0.flags: up</span><br><span class="line"><span class="comment"># 第二个直通网卡</span></span><br><span class="line">lxc.net.1.type: phys</span><br><span class="line">lxc.net.1.link: enp3s0</span><br><span class="line">lxc.net.1.name: eth1</span><br><span class="line">lxc.net.1.flags: up</span><br><span class="line"><span class="comment"># pve自带的openwrt基础组件配置</span></span><br><span class="line">lxc.include: /usr/share/lxc/config/openwrt.common.conf</span><br><span class="line"><span class="comment"># 挂载ppp设备，用于pppoe拨号</span></span><br><span class="line">lxc.cgroup.devices.allow: c 108:0 rwm</span><br><span class="line">lxc.mount.entry: /dev/ppp dev/ppp none <span class="built_in">bind</span>,create=file</span><br><span class="line"><span class="comment"># 挂载tun设备</span></span><br><span class="line">lxc.cgroup2.devices.allow: c 10:200 rwm</span><br><span class="line">lxc.mount.entry: /dev/net/tun dev/net/tun none <span class="built_in">bind</span>,create=file</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 第一个直通网卡</span></span><br><span class="line">lxc.net.0.type: phys</span><br><span class="line">lxc.net.0.link: enp2s0</span><br><span class="line">lxc.net.0.name: eth0</span><br><span class="line">lxc.net.0.flags: up</span><br><span class="line"><span class="comment"># 第二个直通网卡</span></span><br><span class="line">lxc.net.1.type: phys</span><br><span class="line">lxc.net.1.link: enp3s0</span><br><span class="line">lxc.net.1.name: eth1</span><br><span class="line">lxc.net.1.flags: up</span><br><span class="line"><span class="comment"># pve自带的openwrt基础组件配置</span></span><br><span class="line">lxc.include: /usr/share/lxc/config/openwrt.common.conf</span><br><span class="line"><span class="comment"># 挂载ppp设备，用于pppoe拨号</span></span><br><span class="line">lxc.cgroup2.devices.allow: c 108:0 rwm</span><br><span class="line">lxc.mount.entry: /dev/ppp dev/ppp none <span class="built_in">bind</span>,create=file</span><br><span class="line"><span class="comment"># 挂载tun设备</span></span><br><span class="line">lxc.cgroup2.devices.allow: c 10:200 rwm</span><br><span class="line">lxc.mount.entry: /dev/net/tun dev/net/tun none <span class="built_in">bind</span>,create=file</span><br></pre></td></tr></table></figure>
 
 
 
@@ -315,54 +363,6 @@
         <tag>linux</tag>
         <tag>lxc</tag>
         <tag>openwrt</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>lxc安装桌面并且中文化</title>
-    <url>/posts/2567301303.html</url>
-    <content><![CDATA[<p>在PVE下安装debian模板的lxc容器，并安装xfce桌面，做好中文化！</p>
-<span id="more"></span>
-
-<p>如要驱动核显设备和挂载一些文件，最好使用特权容器，避免某些权限问题！</p>
-<p>lxc设置配置越高越好！</p>
-<h3 id="安装XFCE桌面"><a href="#安装XFCE桌面" class="headerlink" title="安装XFCE桌面"></a>安装XFCE桌面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasksel</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803122121194.png" alt="image-20240803122121194"></p>
-<h3 id="安装XRDP"><a href="#安装XRDP" class="headerlink" title="安装XRDP"></a>安装XRDP</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install xrdp -y</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="新建用户"><a href="#新建用户" class="headerlink" title="新建用户"></a>新建用户</h3><p>新建一个使用桌面的用户</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adduser &lt;username&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="授予权限"><a href="#授予权限" class="headerlink" title="授予权限"></a>授予权限</h3><p>授予桌面登录权限和使用sudo的权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG audio,video,sudo &lt;username&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="安装中文字体和输入法"><a href="#安装中文字体和输入法" class="headerlink" title="安装中文字体和输入法"></a>安装中文字体和输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install fonts-wqy-zenhei ibus ibus-pinyin -y</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置中文"><a href="#配置中文" class="headerlink" title="配置中文"></a>配置中文</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132440939.png" alt="image-20240803132440939"></p>
-<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132459694.png" alt="image-20240803132459694"></p>
-<h3 id="重启lxc"><a href="#重启lxc" class="headerlink" title="重启lxc"></a>重启lxc</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
-
-<p>重启之后使用win远程桌面使用新创建的用户登录即可！</p>
-<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132921308.png" alt="image-20240803132921308"></p>
-<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803133018707.png" alt="image-20240803133018707"></p>
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>pve</category>
-        <category>lxc</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>lxc</tag>
-        <tag>pve</tag>
       </tags>
   </entry>
   <entry>
