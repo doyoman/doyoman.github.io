@@ -155,33 +155,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang笔记</title>
-    <url>/posts/1059068992.html</url>
-    <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
-<span id="more"></span>
-
-<h2 id="最简代码"><a href="#最简代码" class="headerlink" title="最简代码"></a>最简代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> age = <span class="number">18</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello Word!&quot;</span>)</span><br><span class="line">	fmt.Println(age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="直接编译运行"><a href="#直接编译运行" class="headerlink" title="直接编译运行"></a>直接编译运行</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="编译二进制"><a href="#编译二进制" class="headerlink" title="编译二进制"></a>编译二进制</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="Linux下交叉编译"><a href="#Linux下交叉编译" class="headerlink" title="Linux下交叉编译"></a>Linux下交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="windows下cmd交叉编译"><a href="#windows下cmd交叉编译" class="headerlink" title="windows下cmd交叉编译"></a>windows下cmd交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> GOOS=linux</span><br><span class="line"><span class="built_in">set</span> GOARCH=amd64</span><br><span class="line"><span class="built_in">set</span> CGO_ENABLED=0</span><br><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
-
-<h4 id="查看支持交叉编译的所有架构类型"><a href="#查看支持交叉编译的所有架构类型" class="headerlink" title="查看支持交叉编译的所有架构类型"></a>查看支持交叉编译的所有架构类型</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go tool dist list</span><br></pre></td></tr></table></figure>
-
-<h4 id="目前支持如下架构"><a href="#目前支持如下架构" class="headerlink" title="目前支持如下架构"></a>目前支持如下架构</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aix/ppc64</span><br><span class="line">android/386</span><br><span class="line">android/amd64</span><br><span class="line">android/arm</span><br><span class="line">android/arm64</span><br><span class="line">darwin/amd64</span><br><span class="line">darwin/arm64</span><br><span class="line">dragonfly/amd64</span><br><span class="line">freebsd/386</span><br><span class="line">freebsd/amd64</span><br><span class="line">freebsd/arm</span><br><span class="line">freebsd/arm64</span><br><span class="line">freebsd/riscv64</span><br><span class="line">illumos/amd64</span><br><span class="line">ios/amd64</span><br><span class="line">ios/arm64</span><br><span class="line">js/wasm</span><br><span class="line">linux/386</span><br><span class="line">linux/amd64</span><br><span class="line">linux/arm</span><br><span class="line">linux/arm64</span><br><span class="line">linux/loong64</span><br><span class="line">linux/mips</span><br><span class="line">linux/mips64</span><br><span class="line">linux/mips64le</span><br><span class="line">linux/mipsle</span><br><span class="line">linux/ppc64</span><br><span class="line">linux/ppc64le</span><br><span class="line">linux/riscv64</span><br><span class="line">linux/s390x</span><br><span class="line">netbsd/386</span><br><span class="line">netbsd/amd64</span><br><span class="line">netbsd/arm</span><br><span class="line">netbsd/arm64</span><br><span class="line">openbsd/386</span><br><span class="line">openbsd/amd64</span><br><span class="line">openbsd/arm</span><br><span class="line">openbsd/arm64</span><br><span class="line">openbsd/ppc64</span><br><span class="line">plan9/386</span><br><span class="line">plan9/amd64</span><br><span class="line">plan9/arm</span><br><span class="line">solaris/amd64</span><br><span class="line">wasip1/wasm</span><br><span class="line">windows/386</span><br><span class="line">windows/amd64</span><br><span class="line">windows/arm</span><br><span class="line">windows/arm64</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>linux</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>hexo密钥登录GitHub</title>
     <url>/posts/3267584825.html</url>
     <content><![CDATA[<p>hexo密钥登录GitHub</p>
@@ -223,6 +196,33 @@
       </categories>
       <tags>
         <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang笔记</title>
+    <url>/posts/1059068992.html</url>
+    <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
+<span id="more"></span>
+
+<h2 id="最简代码"><a href="#最简代码" class="headerlink" title="最简代码"></a>最简代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> age = <span class="number">18</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello Word!&quot;</span>)</span><br><span class="line">	fmt.Println(age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="直接编译运行"><a href="#直接编译运行" class="headerlink" title="直接编译运行"></a>直接编译运行</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编译二进制"><a href="#编译二进制" class="headerlink" title="编译二进制"></a>编译二进制</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux下交叉编译"><a href="#Linux下交叉编译" class="headerlink" title="Linux下交叉编译"></a>Linux下交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="windows下cmd交叉编译"><a href="#windows下cmd交叉编译" class="headerlink" title="windows下cmd交叉编译"></a>windows下cmd交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> GOOS=linux</span><br><span class="line"><span class="built_in">set</span> GOARCH=amd64</span><br><span class="line"><span class="built_in">set</span> CGO_ENABLED=0</span><br><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看支持交叉编译的所有架构类型"><a href="#查看支持交叉编译的所有架构类型" class="headerlink" title="查看支持交叉编译的所有架构类型"></a>查看支持交叉编译的所有架构类型</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go tool dist list</span><br></pre></td></tr></table></figure>
+
+<h4 id="目前支持如下架构"><a href="#目前支持如下架构" class="headerlink" title="目前支持如下架构"></a>目前支持如下架构</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aix/ppc64</span><br><span class="line">android/386</span><br><span class="line">android/amd64</span><br><span class="line">android/arm</span><br><span class="line">android/arm64</span><br><span class="line">darwin/amd64</span><br><span class="line">darwin/arm64</span><br><span class="line">dragonfly/amd64</span><br><span class="line">freebsd/386</span><br><span class="line">freebsd/amd64</span><br><span class="line">freebsd/arm</span><br><span class="line">freebsd/arm64</span><br><span class="line">freebsd/riscv64</span><br><span class="line">illumos/amd64</span><br><span class="line">ios/amd64</span><br><span class="line">ios/arm64</span><br><span class="line">js/wasm</span><br><span class="line">linux/386</span><br><span class="line">linux/amd64</span><br><span class="line">linux/arm</span><br><span class="line">linux/arm64</span><br><span class="line">linux/loong64</span><br><span class="line">linux/mips</span><br><span class="line">linux/mips64</span><br><span class="line">linux/mips64le</span><br><span class="line">linux/mipsle</span><br><span class="line">linux/ppc64</span><br><span class="line">linux/ppc64le</span><br><span class="line">linux/riscv64</span><br><span class="line">linux/s390x</span><br><span class="line">netbsd/386</span><br><span class="line">netbsd/amd64</span><br><span class="line">netbsd/arm</span><br><span class="line">netbsd/arm64</span><br><span class="line">openbsd/386</span><br><span class="line">openbsd/amd64</span><br><span class="line">openbsd/arm</span><br><span class="line">openbsd/arm64</span><br><span class="line">openbsd/ppc64</span><br><span class="line">plan9/386</span><br><span class="line">plan9/amd64</span><br><span class="line">plan9/arm</span><br><span class="line">solaris/amd64</span><br><span class="line">wasip1/wasm</span><br><span class="line">windows/386</span><br><span class="line">windows/amd64</span><br><span class="line">windows/arm</span><br><span class="line">windows/arm64</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>go</tag>
       </tags>
   </entry>
   <entry>
@@ -323,7 +323,7 @@
 <span id="more"></span>
 
 <h3 id="搭建openwrt-lxc"><a href="#搭建openwrt-lxc" class="headerlink" title="搭建openwrt lxc"></a>搭建openwrt lxc</h3><p>直接命令创建lxc容器，不传递网卡参数</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 119 <span class="built_in">local</span>:vztmpl/openwrt-23.05.4-x86-64-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:8 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname openwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 119 <span class="built_in">local</span>:vztmpl/openwrt-23.05.4-x86-64-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:8 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname openwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0</span><br></pre></td></tr></table></figure>
 
 <p>修改lxc配置文件</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/119.conf</span><br></pre></td></tr></table></figure>
@@ -419,6 +419,38 @@
       </tags>
   </entry>
   <entry>
+    <title>使用watchtower自动更新容器</title>
+    <url>/posts/527465299.html</url>
+    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
+<span id="more"></span>
+
+<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>为小存储空间机器拓展空间的方法</title>
     <url>/posts/2933134504.html</url>
     <content><![CDATA[<p>部分机器本身存储空间很小，但是又想玩docker、lxc等占用空间的东西，可以采用此方法！</p>
@@ -461,38 +493,6 @@
       <tags>
         <tag>linux</tag>
         <tag>lxc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用watchtower自动更新容器</title>
-    <url>/posts/527465299.html</url>
-    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
-<span id="more"></span>
-
-<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>linux</category>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
