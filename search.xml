@@ -655,7 +655,7 @@
       </tags>
   </entry>
   <entry>
-    <title>超低配Arm机器使用lxc容器的最佳方案</title>
+    <title>超低配Arm机器使用lxc容器</title>
     <url>/posts/4215636886.html</url>
     <content><![CDATA[<p>适用于大部分低配arm机器，如N1，甚至是410随身WiFi（需要有带有线网卡拓展坞，无线网卡无法开网桥），实现在低配机器上轻松AIO！部分代码取自Cooip！</p>
 <span id="more"></span>
@@ -663,12 +663,26 @@
 <h2 id="更新apt并安装lxc"><a href="#更新apt并安装lxc" class="headerlink" title="更新apt并安装lxc"></a>更新apt并安装lxc</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update &amp;&amp; apt upgrade &amp;&amp; apt install lxc -y</span><br><span class="line">lxc-checkconfig</span><br></pre></td></tr></table></figure>
 
 <p>看到有一长溜输出即可！</p>
-<h2 id="查看网桥是否创建成功"><a href="#查看网桥是否创建成功" class="headerlink" title="查看网桥是否创建成功"></a>查看网桥是否创建成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+<h2 id="手动配置网桥"><a href="#手动配置网桥" class="headerlink" title="手动配置网桥"></a>手动配置网桥</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nmtui</span><br></pre></td></tr></table></figure>
+<p>编辑连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/1.png" alt="1"></p>
+<p>添加网桥<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/2.png" alt="2"></p>
+<p>添加桥接设备<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/3.png" alt="3"></p>
+<p>选择类型为有线网卡<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/4.png" alt="4"></p>
+<p>输入有线网卡名<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/5.png" alt="5"></p>
+<p>开启开机自动连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/6.png" alt="6"></p>
+<p>配置一下有线网卡的连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/7.png" alt="7"></p>
+<p>关闭有线网卡的自动连接，避免开机时和网桥冲突。<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/8.png" alt="8"></p>
+<p>修改lxc桥接配置<br>修改为”false”</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nano /etc/default/lxc-net</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/9.png" alt="9"></p>
+<p>重启设备</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
 
-<p>一般来说，安装好lxc之后已经自动创建好网桥(lxcbr0)了，如果没有，就需要手动创建网桥</p>
-<h2 id="建立第一个模版lxc容器"><a href="#建立第一个模版lxc容器" class="headerlink" title="建立第一个模版lxc容器"></a>建立第一个模版lxc容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-create --name template --template download -- --dist debian --release bookworm --<span class="built_in">arch</span> arm64 --server mirrors.bfsu.edu.cn/lxc-images</span><br></pre></td></tr></table></figure>
 
-<p>会从远程下载最新debian12的rootfs建立lxc容器</p>
+
+<h2 id="建立第一个模版lxc容器"><a href="#建立第一个模版lxc容器" class="headerlink" title="建立第一个模版lxc容器"></a>建立第一个模版lxc容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-create --name template --template download -- --dist debian --release bookworm --<span class="built_in">arch</span> arm64 --server mirrors.tuna.tsinghua.edu.cn/lxc-images</span><br></pre></td></tr></table></figure>
+
+<p>会从清华源远程下载最新debian12的rootfs建立lxc容器</p>
 <h2 id="编辑lxc容器配置文件"><a href="#编辑lxc容器配置文件" class="headerlink" title="编辑lxc容器配置文件"></a>编辑lxc容器配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> &gt; /var/lib/lxc/template/config &amp;&amp; nano /var/lib/lxc/template/config</span><br></pre></td></tr></table></figure>
 
 <p>复制下方配置文件，粘贴到打开的文件中，按需修改</p>
@@ -686,7 +700,11 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-copy -n template -N newname</span><br></pre></td></tr></table></figure>
 
 <h2 id="按需修改新容器配置文件"><a href="#按需修改新容器配置文件" class="headerlink" title="按需修改新容器配置文件"></a>按需修改新容器配置文件</h2><p>或者不改启动lxc直接玩，反正主机名和mac地址在复制中会改好</p>
-<h2 id="设置服务文件开机自启，debian为例"><a href="#设置服务文件开机自启，debian为例" class="headerlink" title="设置服务文件开机自启，debian为例"></a>设置服务文件开机自启，debian为例</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/systemd/system/lxc-start.service</span><br></pre></td></tr></table></figure>
+<h2 id="设置服务文件开机自启，debian为例"><a href="#设置服务文件开机自启，debian为例" class="headerlink" title="设置服务文件开机自启，debian为例"></a>设置服务文件开机自启，debian为例</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">lxc.start.auto = 1</span><br><span class="line">lxc.group = onboot</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/10.png" alt="10"></p>
+<p>在lxc配置文件中添加了以上配置，此lxc应该能够开机自启，如果还是不能开机自启，那么再配置以下自启服务。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/systemd/system/lxc-start.service</span><br></pre></td></tr></table></figure>
 
 <p>复制下方配置文件粘贴进去</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=<span class="string">&quot;LXC autostart for lxc user&quot;</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/lxc-autostart --all</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=default.target</span><br></pre></td></tr></table></figure>
@@ -695,7 +713,11 @@
 <p>设置开机自启</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> lxc-start.service</span><br><span class="line">systemctl start lxc-start.service</span><br><span class="line">systemctl status lxc-start.service</span><br></pre></td></tr></table></figure>
 
-<h2 id="lxc容器常用命令"><a href="#lxc容器常用命令" class="headerlink" title="lxc容器常用命令"></a>lxc容器常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-attach name  <span class="comment">#进入lxc</span></span><br><span class="line">lxc-start name  <span class="comment">#启动lxc</span></span><br><span class="line">lxc-stop name  <span class="comment">#停止lxc</span></span><br><span class="line">lxc-destroy name  <span class="comment">#销毁lxc</span></span><br><span class="line">lxc-ls name <span class="comment">#列出所有lxc，可加-f查看详情</span></span><br></pre></td></tr></table></figure>]]></content>
+<h2 id="lxc容器常用命令"><a href="#lxc容器常用命令" class="headerlink" title="lxc容器常用命令"></a>lxc容器常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-attach name  <span class="comment">#进入lxc</span></span><br><span class="line">lxc-start name  <span class="comment">#启动lxc</span></span><br><span class="line">lxc-stop name  <span class="comment">#停止lxc</span></span><br><span class="line">lxc-destroy name  <span class="comment">#销毁lxc</span></span><br><span class="line">lxc-ls name <span class="comment">#列出所有lxc，可加-f查看详情</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="lxc相关配置文件路径"><a href="#lxc相关配置文件路径" class="headerlink" title="lxc相关配置文件路径"></a>lxc相关配置文件路径</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># lxc 自启等相关默认配置</span><br><span class="line">/etc/default/lxc</span><br><span class="line"># lxc 网络相关默认配置</span><br><span class="line">/etc/default/lxc-net</span><br><span class="line"># lxc 配置文件模板配置</span><br><span class="line">/etc/lxc/default.conf</span><br><span class="line"># 所有lxc所在目录</span><br><span class="line">/var/lib/lxc/</span><br></pre></td></tr></table></figure>
+
+]]></content>
       <categories>
         <category>linux</category>
       </categories>
