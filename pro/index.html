@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键：移动端视口适配 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro 登录</title>
+    <style>
+        /* 基础样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* iframe 容器 */
+        .iframe-container {
+            width: 100%;
+            height: 100vh;  /* 占满整个视口高度 */
+            overflow: auto;  /* 内容溢出时滚动 */
+            position: relative;
+        }
+
+        /* iframe 本体 */
+        .responsive-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 备用内容样式（当不支持 iframe 时显示） */
+        .fallback {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 移动端特定样式 */
+        @media (max-width: 768px) {
+            .fallback a {
+                display: block;
+                padding: 15px;
+                background: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <!-- iframe 主体 -->
+        <iframe 
+            src="https://pro.101013.xyz:44133/"
+            class="responsive-iframe"
+            title="主要内容"
+            scrolling="auto"
+            allowfullscreen
+        >
+            <!-- 浏览器不支持 iframe 时的备用内容 -->
+            <div class="fallback">
+                <p>您的浏览器不支持嵌入式页面。</p>
+                <a href="https://pro.101013.xyz:44133/" class="fallback-link">
+                    点击此处访问独立页面
+                </a>
+            </div>
+        </iframe>
+    </div>
+
+    <!-- 可选：JavaScript 增强兼容性 -->
+    <script>
+        // 检测 iframe 是否加载成功
+        window.addEventListener('load', function() {
+            const iframe = document.querySelector('.responsive-iframe');
+            const fallback = document.querySelector('.fallback');
+
+            // 如果 iframe 内容未加载（如被广告拦截器拦截）
+            if (!iframe.contentDocument || 
+                iframe.contentDocument.readyState !== 'complete') {
+                fallback.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
