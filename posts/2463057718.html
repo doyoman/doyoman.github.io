@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/IMG_6986.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.olds.eu.org","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Tinc 是一个开源、跨平台的虚拟私有网络（VPN），支持TCP、UDP，IPV4、IPV6组网，相较于Wireguard、Tailscale等基于UDP的VPN，能有更好的连接表现！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="debian部署tinc组网">
+<meta property="og:url" content="https://blog.olds.eu.org/posts/2463057718.html">
+<meta property="og:site_name" content="趣研思">
+<meta property="og:description" content="Tinc 是一个开源、跨平台的虚拟私有网络（VPN），支持TCP、UDP，IPV4、IPV6组网，相较于Wireguard、Tailscale等基于UDP的VPN，能有更好的连接表现！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-09-19T15:30:27.000Z">
+<meta property="article:modified_time" content="2024-09-20T06:30:27.000Z">
+<meta property="article:author" content="doyo">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="内网穿透">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://blog.olds.eu.org/posts/2463057718.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>debian部署tinc组网 | 趣研思</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">趣研思</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">乐趣、研究、思考！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-cloud">
+
+    <a href="/cloud/" rel="section"><i class="fa fa-cloud-download-alt fa-fw"></i>资源下载</a>
+
+  </li>
+        <li class="menu-item menu-item-pro">
+
+    <a href="/pro/" rel="section"><i class="fa fa-car-side fa-fw"></i>Pro 登录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.olds.eu.org/posts/2463057718.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/IMG_6985.jpeg">
+      <meta itemprop="name" content="doyo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="趣研思">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          debian部署tinc组网
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-19 23:30:27" itemprop="dateCreated datePublished" datetime="2024-09-19T23:30:27+08:00">2024-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-20 14:30:27" itemprop="dateModified" datetime="2024-09-20T14:30:27+08:00">2024-09-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">内网穿透</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Tinc 是一个开源、跨平台的虚拟私有网络（VPN），支持TCP、UDP，IPV4、IPV6组网，相较于Wireguard、Tailscale等基于UDP的VPN，能有更好的连接表现！</p>
+<span id="more"></span>
+
+<p><strong>主机A：</strong>有公网IP，做主节点，本机局域网IP为 192.168.2.111，内网网段 192.168.2.0&#x2F;24，设置VPN主机名为master，VPN IP为 10.0.0.1</p>
+<p><strong>主机B：</strong>无公网IP，做子节点，本机局域网IP为 192.168.3.57，内网网段 192.168.3.0&#x2F;24，设置VPN主机名为tinc1，VPN IP为 10.0.0.2</p>
+<p><strong>最终实现：</strong></p>
+<p>1、在主机A上可ping通 10.0.0.2，192.168.3.57 以及 192.168.3.0&#x2F;24 网段所有IP</p>
+<p>2、在主机B上可ping通 10.0.0.1，192.168.2.111 以及 192.168.2.0&#x2F;24 网段所有IP</p>
+<h3 id="部署主节点"><a href="#部署主节点" class="headerlink" title="部署主节点"></a>部署主节点</h3><h4 id="创建tinc-conf文件"><a href="#创建tinc-conf文件" class="headerlink" title="创建tinc.conf文件"></a>创建tinc.conf文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Name = master</span></span><br><span class="line"><span class="string">Interface = tinc</span></span><br><span class="line"><span class="string">Mode = switch</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-up文件"><a href="#创建tinc-up文件" class="headerlink" title="创建tinc-up文件"></a>创建tinc-up文件</h4><p>tinc启动时运行的文件，用来创建接口，添加路由</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>10.0.0.2 为对端机器VPN IP，根据需要修改</p>
+<p>192.168.3.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-up &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip link set $INTERFACE up</span></span><br><span class="line"><span class="string">ip addr add 10.0.0.1/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip route add 192.168.3.0/24 via 10.0.0.2 dev $INTERFACE src 10.0.0.1 onlink</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-up</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-down文件"><a href="#创建tinc-down文件" class="headerlink" title="创建tinc-down文件"></a>创建tinc-down文件</h4><p>tinc关闭时运行的文件，用来删除路由，关闭接口</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>192.168.3.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-down &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip route del 192.168.3.0/24</span></span><br><span class="line"><span class="string">ip addr del 10.0.0.1/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip link set $INTERFACE down</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-down</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建主机master文件"><a href="#创建主机master文件" class="headerlink" title="创建主机master文件"></a>创建主机master文件</h4><p>domain.com 为公网IP或者公网IP绑定的域名，可为ddns域名</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>11391，监听端口，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/hosts/master &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Address = domain.com</span></span><br><span class="line"><span class="string">Subnet = 10.0.0.1/32</span></span><br><span class="line"><span class="string">Port = 11391</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h4><p>需要两次回车</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tincd -n tinc_net -K</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署子节点"><a href="#部署子节点" class="headerlink" title="部署子节点"></a>部署子节点</h3><h4 id="创建tinc-conf文件-1"><a href="#创建tinc-conf文件-1" class="headerlink" title="创建tinc.conf文件"></a>创建tinc.conf文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Name = tinc1</span></span><br><span class="line"><span class="string">Interface = tinc</span></span><br><span class="line"><span class="string">Mode = switch</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-up文件-1"><a href="#创建tinc-up文件-1" class="headerlink" title="创建tinc-up文件"></a>创建tinc-up文件</h4><p>tinc启动时运行的文件，用来创建接口，添加路由</p>
+<p>10.0.0.2 为本机VPN IP，可修改</p>
+<p>10.0.0.1 为对端机器VPN IP，根据需要修改</p>
+<p>192.168.2.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-up &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip link set $INTERFACE up</span></span><br><span class="line"><span class="string">ip addr add 10.0.0.2/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip route add 192.168.2.0/24 via 10.0.0.1 dev $INTERFACE src 10.0.0.2 onlink</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-up</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-down文件-1"><a href="#创建tinc-down文件-1" class="headerlink" title="创建tinc-down文件"></a>创建tinc-down文件</h4><p>tinc关闭时运行的文件，用来删除路由，关闭接口</p>
+<p>10.0.0.2 为本机VPN IP，可修改</p>
+<p>192.168.2.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-down &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip route del 192.168.2.0/24</span></span><br><span class="line"><span class="string">ip addr del 10.0.0./24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip link set $INTERFACE down</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-down</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建主机tinc1文件"><a href="#创建主机tinc1文件" class="headerlink" title="创建主机tinc1文件"></a>创建主机tinc1文件</h4><p>10.0.0.2 为本机VPN IP，可修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/hosts/tinc1 &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Subnet = 10.0.0.2/32</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建密钥-1"><a href="#创建密钥-1" class="headerlink" title="创建密钥"></a>创建密钥</h4><p>需要两次回车</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tincd -n tinc_net -K</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="交换公钥"><a href="#交换公钥" class="headerlink" title="交换公钥"></a>交换公钥</h3><h4 id="公钥文件为："><a href="#公钥文件为：" class="headerlink" title="公钥文件为："></a>公钥文件为：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/tinc/tinc_net/hosts/</span><br></pre></td></tr></table></figure>
+
+<p>目录下的主机文件，将其相互复制到对应的主机即可！</p>
+<p>自行通过各种方式将密钥，例如scp，winscp，ftp……</p>
+<h4 id="分别启动tuic"><a href="#分别启动tuic" class="headerlink" title="分别启动tuic"></a>分别启动tuic</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> tinc@tinc_net</span><br><span class="line">systemctl start tinc@tinc_net</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="防火墙实现IP动态伪装"><a href="#防火墙实现IP动态伪装" class="headerlink" title="防火墙实现IP动态伪装"></a>防火墙实现IP动态伪装</h3><p>必须有防火墙做IP动态伪装，否则无法联通对端内网所有IP</p>
+<p>示例为debian网络出口为eth0的情况下</p>
+<h4 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nftables"><a href="#nftables" class="headerlink" title="nftables"></a>nftables</h4><ul>
+<li><strong>临时生效</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nft add table ip nat</span><br><span class="line">nft add chain ip nat postrouting &#123; <span class="built_in">type</span> nat hook postrouting priority 100 \; &#125;</span><br><span class="line">nft add rule ip nat postrouting oifname <span class="string">&quot;eth0&quot;</span> masquerade</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>长期有效</strong></li>
+</ul>
+<p>写入规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/nftables.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">table ip nat &#123;</span></span><br><span class="line"><span class="string">    chain postrouting &#123;</span></span><br><span class="line"><span class="string">        type nat hook postrouting priority 100; policy accept;</span></span><br><span class="line"><span class="string">        oifname &quot;eth0&quot; masquerade;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>加载使其生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft -f /etc/nftables.conf</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 内网穿透</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/2444221817.html" rel="prev" title="pve搭建lxc openwrt并直通网卡">
+      <i class="fa fa-chevron-left"></i> pve搭建lxc openwrt并直通网卡
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/687501595.html" rel="next" title="debian系统openvpn组网双向互访">
+      debian系统openvpn组网双向互访 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">部署主节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-conf%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">创建tinc.conf文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-up%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">创建tinc-up文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-down%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">创建tinc-down文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%BB%E6%9C%BAmaster%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">创建主机master文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5"><span class="nav-number">1.5.</span> <span class="nav-text">创建密钥</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%AD%90%E8%8A%82%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">部署子节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-conf%E6%96%87%E4%BB%B6-1"><span class="nav-number">2.1.</span> <span class="nav-text">创建tinc.conf文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-up%E6%96%87%E4%BB%B6-1"><span class="nav-number">2.2.</span> <span class="nav-text">创建tinc-up文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAtinc-down%E6%96%87%E4%BB%B6-1"><span class="nav-number">2.3.</span> <span class="nav-text">创建tinc-down文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%BB%E6%9C%BAtinc1%E6%96%87%E4%BB%B6"><span class="nav-number">2.4.</span> <span class="nav-text">创建主机tinc1文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%86%E9%92%A5-1"><span class="nav-number">2.5.</span> <span class="nav-text">创建密钥</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E5%85%AC%E9%92%A5"><span class="nav-number">3.</span> <span class="nav-text">交换公钥</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E6%96%87%E4%BB%B6%E4%B8%BA%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">公钥文件为：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%88%AB%E5%90%AF%E5%8A%A8tuic"><span class="nav-number">3.2.</span> <span class="nav-text">分别启动tuic</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E5%AE%9E%E7%8E%B0IP%E5%8A%A8%E6%80%81%E4%BC%AA%E8%A3%85"><span class="nav-number">4.</span> <span class="nav-text">防火墙实现IP动态伪装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables"><span class="nav-number">4.1.</span> <span class="nav-text">iptables</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nftables"><span class="nav-number">4.2.</span> <span class="nav-text">nftables</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="doyo"
+      src="/images/IMG_6985.jpeg">
+  <p class="site-author-name" itemprop="name">doyo</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">doyo</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'Ov23li55Rzo1NPjM7xb4',
+      clientSecret: '289d8a6034e609cb6298572a5d41e6a5f1d70c3c',
+      repo        : 'doyoman.github.io',
+      owner       : 'doyoman',
+      admin       : ['doyoman'],
+      id          : 'e6144e6dbceafa59d0e8b13a1467219d',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

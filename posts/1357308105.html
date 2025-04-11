@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/IMG_6986.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.olds.eu.org","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文基于Debian而写。 不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="公网IPV4的从无到有——natmap打洞">
+<meta property="og:url" content="https://blog.olds.eu.org/posts/1357308105.html">
+<meta property="og:site_name" content="趣研思">
+<meta property="og:description" content="本文基于Debian而写。 不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.olds.eu.org/images/image-fpsz.png">
+<meta property="og:image" content="https://blog.olds.eu.org/images/image-mfrk.png">
+<meta property="og:image" content="https://blog.olds.eu.org/images/image-ckxo.png">
+<meta property="article:published_time" content="2024-07-03T02:39:51.000Z">
+<meta property="article:modified_time" content="2024-07-25T01:39:48.000Z">
+<meta property="article:author" content="doyo">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="lxc">
+<meta property="article:tag" content="内网穿透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.olds.eu.org/images/image-fpsz.png">
+
+<link rel="canonical" href="https://blog.olds.eu.org/posts/1357308105.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>公网IPV4的从无到有——natmap打洞 | 趣研思</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">趣研思</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">乐趣、研究、思考！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-cloud">
+
+    <a href="/cloud/" rel="section"><i class="fa fa-cloud-download-alt fa-fw"></i>资源下载</a>
+
+  </li>
+        <li class="menu-item menu-item-pro">
+
+    <a href="/pro/" rel="section"><i class="fa fa-car-side fa-fw"></i>Pro 登录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.olds.eu.org/posts/1357308105.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/IMG_6985.jpeg">
+      <meta itemprop="name" content="doyo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="趣研思">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          公网IPV4的从无到有——natmap打洞
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-03 10:39:51" itemprop="dateCreated datePublished" datetime="2024-07-03T10:39:51+08:00">2024-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-25 09:39:48" itemprop="dateModified" datetime="2024-07-25T09:39:48+08:00">2024-07-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文基于Debian而写。</p>
+<p>不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！</p>
+<span id="more"></span>
+
+<p><a target="_blank" rel="noopener" href="https://sing-box.sagernet.org/installation/package-manager/"><em>singbox服务端一键搭建点我</em></a></p>
+<h2 id="检测自己的nat类型"><a href="#检测自己的nat类型" class="headerlink" title="检测自己的nat类型"></a>检测自己的nat类型</h2><p>检测前一定要最大限度减少本地nat，路由器开dmz，或者直接拨号设备测试！</p>
+<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>下载 <a target="_blank" rel="noopener" href="https://github.com/HMBSbige/NatTypeTester/releases">NatTypeTester</a>，如下检测方法，结果是Full Cone则为nat1。</p>
+<p><img src="/../images/image-fpsz.png" alt="img"></p>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>使用python工具，pystun3。</p>
+<p>pystun3是pip包管理器安装，确保本机安装好了python3和pip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install pystun3 <span class="comment"># 安装pystun3</span></span><br><span class="line"></span><br><span class="line">pystun3 <span class="comment"># 开始测试</span></span><br></pre></td></tr></table></figure>
+
+<p>结果如下，显示Full Cone则为nat1。</p>
+<p><img src="/../images/image-mfrk.png" alt="img"></p>
+<h2 id="安装natmap"><a href="#安装natmap" class="headerlink" title="安装natmap"></a>安装natmap</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -O /usr/bin/natmap https://github.com/heiher/natmap/releases/download/20240303/natmap-linux-arm64 &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/natmap</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="写入ddns脚本"><a href="#写入ddns脚本" class="headerlink" title="写入ddns脚本"></a>写入ddns脚本</h2><p>创建并授权</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> /usr/bin/ddns_natmap &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/ddns_natmap</span><br></pre></td></tr></table></figure>
+
+<p>此ddns脚本需要使用jq</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install jq</span><br></pre></td></tr></table></figure>
+
+<p>复制下方脚本内容，使用nano写入&#x2F;usr&#x2F;bin&#x2F;ddns_natmap，需要的信息自行补充！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消这个注释并修改[bark-key]可在ip和端口改变时获得ios的推送，需要在ios上安装bark app</span></span><br><span class="line"><span class="comment">#curl https://api.day.app/[bark-key]/nat穿透信息改变/$&#123;1&#125;:$&#123;2&#125;%0a$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置natmap打洞转发"><a href="#设置natmap打洞转发" class="headerlink" title="设置natmap打洞转发"></a>设置natmap打洞转发</h2><p>需修改一下自己的转发IP和端口，以及超时时间之类信息</p>
+<p><strong>-T 参数是超时时间，默认是120，这个设置其实还是比较重要的，比如通过natmap打洞的隧道连接ssh时，如果120秒空闲的话，会直接断开ssh连接，我一般设置成3600</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/systemd/system/natmap.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=natmap server</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=natmap -i eth0 -4 -s stunserver2024.stunprotocol.org -h qq.com -b [任意未使用端口或0(随机端口)] -t [转发的目标IP] -p [转发的目标端口] -T [超时时间秒] -e /usr/bin/ddns_natmap</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置开机自启"><a href="#设置开机自启" class="headerlink" title="设置开机自启"></a>设置开机自启</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start natmap.service</span><br><span class="line">systemctl <span class="built_in">enable</span> natmap.service</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="代理app解析使用"><a href="#代理app解析使用" class="headerlink" title="代理app解析使用"></a>代理app解析使用</h2><p>natmap上传的是<a target="_blank" rel="noopener" href="https://github.com/heiher/natmap/wiki/faq#%E5%9F%9F%E5%90%8D%E8%AE%BF%E9%97%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84">IP4P格式</a>的IP，普通客户端无法识别，可在iOS上使用<a target="_blank" rel="noopener" href="https://github.com/sub-store-org/Sub-Store/tree/master/config">sub-store</a>，或者<a target="_blank" rel="noopener" href="https://xream.notion.site/Sub-Store-abe6a96944724dc6a36833d5c9ab7c87">服务器自建sub-store服务</a>来达到解析IP4P的效果！sub-store可以支持几乎所有客户端的转换！</p>
+<p><img src="/../images/image-ckxo.png" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+              <a href="/tags/lxc/" rel="tag"><i class="fa fa-tag"></i> lxc</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 内网穿透</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/2933134504.html" rel="prev" title="为小存储空间机器拓展空间的方法">
+      <i class="fa fa-chevron-left"></i> 为小存储空间机器拓展空间的方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/2550623555.html" rel="next" title="为debian添加rc.local开机自启服务">
+      为debian添加rc.local开机自启服务 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E8%87%AA%E5%B7%B1%E7%9A%84nat%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">检测自己的nat类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#windows"><span class="nav-number">1.1.</span> <span class="nav-text">windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux"><span class="nav-number">1.2.</span> <span class="nav-text">linux</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85natmap"><span class="nav-number">2.</span> <span class="nav-text">安装natmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5ddns%E8%84%9A%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">写入ddns脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AEnatmap%E6%89%93%E6%B4%9E%E8%BD%AC%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">设置natmap打洞转发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-number">5.</span> <span class="nav-text">设置开机自启</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%90%86app%E8%A7%A3%E6%9E%90%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">代理app解析使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="doyo"
+      src="/images/IMG_6985.jpeg">
+  <p class="site-author-name" itemprop="name">doyo</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">doyo</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'Ov23li55Rzo1NPjM7xb4',
+      clientSecret: '289d8a6034e609cb6298572a5d41e6a5f1d70c3c',
+      repo        : 'doyoman.github.io',
+      owner       : 'doyoman',
+      admin       : ['doyoman'],
+      id          : '92a51d5304224df8dd5ee12561a031c5',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

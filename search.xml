@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Arm机器基于debian的lxc容器初始化配置</title>
+    <url>/posts/1826688815.html</url>
+    <content><![CDATA[<p>自用的lxc容器初始化配置</p>
+<span id="more"></span>
+
+<h2 id="安装ca-certificates"><a href="#安装ca-certificates" class="headerlink" title="安装ca-certificates"></a>安装ca-certificates</h2><p>替换的源是https源，现在不装等下无法更新源。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install --reinstall ca-certificates -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="替换debian源"><a href="#替换debian源" class="headerlink" title="替换debian源"></a>替换debian源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&quot;s@http://deb.debian.org@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+
+<h2 id="更新源缓存"><a href="#更新源缓存" class="headerlink" title="更新源缓存"></a>更新源缓存</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置网络"><a href="#设置网络" class="headerlink" title="设置网络"></a>设置网络</h2><p>使用dhcp则不用设置，可跳过。</p>
+<p>静态IP设置如下，自行替换IP、网关、DNS。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/systemd/network/eth0.network /etc/systemd/network/eth0.network.bak</span><br><span class="line"><span class="built_in">cat</span> &gt; /etc/systemd/network/eth0.network &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Match]</span></span><br><span class="line"><span class="string">Name=eth0</span></span><br><span class="line"><span class="string">[Network]</span></span><br><span class="line"><span class="string">Address=192.168.2.105/24</span></span><br><span class="line"><span class="string">Gateway=192.168.2.1</span></span><br><span class="line"><span class="string">DNS=192.168.2.1</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="安装工具"><a href="#安装工具" class="headerlink" title="安装工具"></a>安装工具</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install bash-completion curl wget nano -y</span><br></pre></td></tr></table></figure>
+
+<p>写入bash-completion配置并使立刻生效</p>
+<p>bash-completion是用来增强bash的自动补全功能的</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; ~/.bashrc &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">if [ -f /etc/bash_completion ]; then</span></span><br><span class="line"><span class="string">    . /etc/bash_completion</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使其立即生效</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="更改时区"><a href="#更改时区" class="headerlink" title="更改时区"></a>更改时区</h2><p>debian</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">timedatectl set-timezone Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<p>alpine</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setup-timezone -z Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h2 id="开启ssh"><a href="#开启ssh" class="headerlink" title="开启ssh"></a>开启ssh</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install openssh-server -y</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件使支持root用户密码登录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&quot;s@#PermitRootLogin prohibit-password@PermitRootLogin yes@g&quot;</span> /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<p>重载sshd配置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart sshd</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker使用macvlan网络创建容器</title>
+    <url>/posts/3032485565.html</url>
+    <content><![CDATA[<p>docker macvlan方式创建容器可以使容器具有独立的IP和全端口，某一些程序运行能更方便，不受限于宿主机的端口不够用！</p>
+<span id="more"></span>
+
+<h2 id="创建macvlan网络"><a href="#创建macvlan网络" class="headerlink" title="创建macvlan网络"></a>创建macvlan网络</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create -d macvlan \</span><br><span class="line">    -o parent=eth0 \</span><br><span class="line">    --subnet 192.168.2.0/24 \</span><br><span class="line">    --gateway 192.168.2.1 \</span><br><span class="line">    --ip-range 192.168.2.16/28 \</span><br><span class="line">    macvlan1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>参数解释</p>
+<ul>
+<li>-o parent：实体网卡名称</li>
+<li>–subnet：子网CIDR格式</li>
+<li>–gateway：网关地址</li>
+<li>–ip-range：IP分配范围，CIDR格式<blockquote>
+<p>CIDR格式的IP分配范围可使用 –&gt; <em><a href="https://tools.101013.xyz/ipv4-subnet-calculator">CIDR子网计算器</a></em> 计算出来！  </p>
+</blockquote>
+</li>
+<li>–aux-address：排除 IP 地址（可多个）<blockquote>
+<p>–aux-address示例：–aux-address&#x3D;”host&#x3D;192.168.2.20”</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>查看macvlan创建是否成功  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker network <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+<p>输出如下：macvlan1即是刚刚创建的macvlan网络  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">NETWORK ID     NAME       DRIVER    SCOPE</span><br><span class="line">5f0a5cf51be2   bridge     bridge    <span class="built_in">local</span></span><br><span class="line">3662e4114d7c   host       host      <span class="built_in">local</span></span><br><span class="line">0263f95a7f47   macvlan1   macvlan   <span class="built_in">local</span></span><br><span class="line">d4dda61252f6   none       null      <span class="built_in">local</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建使用macvlan的容器"><a href="#创建使用macvlan的容器" class="headerlink" title="创建使用macvlan的容器"></a>创建使用macvlan的容器</h2><p>以创建Alpine为例  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -td \</span><br><span class="line">    --name=mac1 \</span><br><span class="line">    --network=macvlan1 \</span><br><span class="line">    alpine:latest \</span><br><span class="line">    sh</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>参数解释  </p>
+<ul>
+<li>-td：开启tty，并后台运行容器</li>
+<li>–name：指定名称</li>
+<li>–network：指定使用的网络</li>
+<li>–ip:指定容器IP</li>
+<li>–dns:指定容器DNS</li>
+</ul>
+<hr>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+        <category>macvlan</category>
+        <category>容器</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+        <tag>macvlan</tag>
+        <tag>容器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux更换国内源大全</title>
+    <url>/posts/1641155356.html</url>
+    <content><![CDATA[<p>Linux换源大全</p>
+<span id="more"></span>
+
+<h2 id="Linux系统换源"><a href="#Linux系统换源" class="headerlink" title="Linux系统换源"></a>Linux系统换源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bash &lt;(curl -sSL https://linuxmirrors.cn/main.sh)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Docker换源"><a href="#Docker换源" class="headerlink" title="Docker换源"></a>Docker换源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bash &lt;(curl -sSL https://linuxmirrors.cn/docker.sh)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Alpine换源"><a href="#Alpine换源" class="headerlink" title="Alpine换源"></a>Alpine换源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s@https\?://dl-cdn.alpinelinux.org/@https://mirrors.tuna.tsinghua.edu.cn/@g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
+
+<h2 id="Debian换源"><a href="#Debian换源" class="headerlink" title="Debian换源"></a>Debian换源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install --reinstall ca-certificates -y</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">&quot;s@https\?://deb.debian.org@https://mirrors.tuna.tsinghua.edu.cn@g&quot;</span> /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+
+<h2 id="node-js-系列换源"><a href="#node-js-系列换源" class="headerlink" title="node.js 系列换源"></a>node.js 系列换源</h2><h3 id="npm"><a href="#npm" class="headerlink" title="npm"></a>npm</h3><p>查询源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm get registry</span><br></pre></td></tr></table></figure>
+<p>设置源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com/</span><br></pre></td></tr></table></figure>
+
+<h3 id="pnpm"><a href="#pnpm" class="headerlink" title="pnpm"></a>pnpm</h3><p>查询源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pnpm get registry</span><br></pre></td></tr></table></figure>
+<p>设置源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pnpm config <span class="built_in">set</span> registry https://registry.npmmirror.com/</span><br></pre></td></tr></table></figure>
+
+<h3 id="yarn"><a href="#yarn" class="headerlink" title="yarn"></a>yarn</h3><p>查询源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yarn config get registry</span><br></pre></td></tr></table></figure>
+<p>设置源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yarn config <span class="built_in">set</span> registry https://registry.npmmirror.com/</span><br></pre></td></tr></table></figure>
+
+<h3 id="node-js源集合"><a href="#node-js源集合" class="headerlink" title="node.js源集合"></a>node.js源集合</h3><figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;npm&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://registry.npmjs.org/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;yarn&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://registry.yarnpkg.com/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tencent&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://mirrors.cloud.tencent.com/npm/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;taobao&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://registry.npmmirror.com/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cnpm&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://r.cnpmjs.org/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;npmMirror&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://skimdb.npmjs.com/registry/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ali&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://registry.npm.alibaba-inc.com/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;huawei&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://mirrors.huaweicloud.com/repository/npm/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;163&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://mirrors.163.com/npm/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ustc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://mirrors.ustc.edu.cn/&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tsinghua&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://mirrors.tuna.tsinghua.edu.cn/&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="pip换源"><a href="#pip换源" class="headerlink" title="pip换源"></a>pip换源</h2><h3 id="临时使用"><a href="#临时使用" class="headerlink" title="临时使用"></a>临时使用</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple &lt;your-package&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="设为默认"><a href="#设为默认" class="headerlink" title="设为默认"></a>设为默认</h3><p>升级 pip 到最新的版本后进行配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip</span><br><span class="line">pip config <span class="built_in">set</span> global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>PVE下lxc中文乱码解决方法</title>
+    <url>/posts/592933762.html</url>
+    <content><![CDATA[<p>pve的debian CT模板显示中文乱码，终端无法输入中文，这样处理完美解决！</p>
+<span id="more"></span>
+<h2 id="修改前后对比"><a href="#修改前后对比" class="headerlink" title="修改前后对比"></a>修改前后对比</h2><h3 id="修改前"><a href="#修改前" class="headerlink" title="修改前"></a>修改前</h3><p><img src="/../images/image-sjdh-5.png" alt="img"></p>
+<h3 id="修改后"><a href="#修改后" class="headerlink" title="修改后"></a>修改后</h3><p><img src="/../images/image-sjdh-6.png" alt="img"></p>
+<h2 id="安装locales"><a href="#安装locales" class="headerlink" title="安装locales"></a>安装locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt install locales -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置locales"><a href="#配置locales" class="headerlink" title="配置locales"></a>配置locales</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-sjdh-1.png" alt="img"><br><img src="/../images/image-sjdh-2.png" alt="img"><br><img src="/../images/image-sjdh-3.png" alt="img"><br><img src="/../images/image-sjdh-4.png" alt="img"></p>
+<p>enjoy！</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PVE下lxc搭建emby实现intel核显硬解</title>
+    <url>/posts/1828301106.html</url>
+    <content><![CDATA[<p>lxc搭建emby的笔记！本文使用PVE x86平台最新版8.2版本</p>
+<span id="more"></span>
+<h3 id="PVE检查核显固件"><a href="#PVE检查核显固件" class="headerlink" title="PVE检查核显固件"></a>PVE检查核显固件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /lib/firmware/i915 &amp;&amp; <span class="built_in">ls</span> ehl_guc*.bin &amp;&amp; <span class="built_in">ls</span> ehl_huc*.bin &amp;&amp; <span class="built_in">ls</span> icl_dmc*.bin</span><br></pre></td></tr></table></figure>
+<p>显示类似如下内容则说明不缺固件，否则需要补固件<br><img src="/../images/image-qbci-1.png" alt="img"><br>如果缺固件，则补固件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /lib/firmware/i915 &amp;&amp; <span class="built_in">cd</span> /lib/firmware/i915</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_guc_70.1.1.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/ehl_huc_9.0.0.bin</span><br><span class="line">curl -LO https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/i915/icl_dmc_ver1_09.bin</span><br></pre></td></tr></table></figure>
+<h3 id="检查核显是否正确加载"><a href="#检查核显是否正确加载" class="headerlink" title="检查核显是否正确加载"></a>检查核显是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-qbci-2.png" alt="img"><br>没有显示GuC、HuC内容说明没有正确加载核显驱动，需要修改i915.conf文件</p>
+<h3 id="修改i915-conf文件"><a href="#修改i915-conf文件" class="headerlink" title="修改i915.conf文件"></a>修改i915.conf文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;options i915 enable_guc=3&quot;</span> &gt;&gt; /etc/modprobe.d/i915.conf</span><br></pre></td></tr></table></figure>
+<h3 id="修改后重启机器"><a href="#修改后重启机器" class="headerlink" title="修改后重启机器"></a>修改后重启机器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<h3 id="再次检查i915驱动是否正确加载"><a href="#再次检查i915驱动是否正确加载" class="headerlink" title="再次检查i915驱动是否正确加载"></a>再次检查i915驱动是否正确加载</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dmesg | grep i915</span><br></pre></td></tr></table></figure>
+<p>显示如下，正确加载，驱动核显成功！<br><img src="/../images/image-qbci-3.png" alt="img"></p>
+<p>在PVE下已经把核显成功驱动了，接下来挂载到lxc里面使用就行！</p>
+<h3 id="lxc使用特权容器，非特权容器会有权限问题！！！"><a href="#lxc使用特权容器，非特权容器会有权限问题！！！" class="headerlink" title="lxc使用特权容器，非特权容器会有权限问题！！！"></a>lxc使用特权容器，非特权容器会有权限问题！！！</h3><h3 id="查看cgroup版本"><a href="#查看cgroup版本" class="headerlink" title="查看cgroup版本"></a>查看cgroup版本</h3><p>PVE高版本都是使用cgroup2，为了保险起见，可以查看一下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mount | grep cgroup</span><br></pre></td></tr></table></figure>
+<p>如图，显示是cgroup2<br><img src="/../images/image-qbci-4.png" alt="img"></p>
+<h3 id="编辑lxc配置文件"><a href="#编辑lxc配置文件" class="headerlink" title="编辑lxc配置文件"></a>编辑lxc配置文件</h3><p>以lxc 110为例</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/110.conf</span><br></pre></td></tr></table></figure>
+<p>将下列内容粘贴到打开的配置文件最下方</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.cgroup2.devices.allow: c 226:* rwm</span><br><span class="line">lxc.mount.entry: /dev/dri dev/dri none <span class="built_in">bind</span>,optional,create=<span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重启lxc并进入"><a href="#重启lxc并进入" class="headerlink" title="重启lxc并进入"></a>重启lxc并进入</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct reboot 110 &amp;&amp; lxc-attach 110</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装EMBY"><a href="#安装EMBY" class="headerlink" title="安装EMBY"></a>安装EMBY</h3><p><a href="https://emby.media/linux-server.html">emby下载页</a>，如不是debian，自行选择对应系统及安装方法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://github.com/MediaBrowser/Emby.Releases/releases/download/4.8.8.0/emby-server-deb_4.8.8.0_amd64.deb</span><br><span class="line">dpkg -i emby-server-deb_4.8.8.0_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<h3 id="解决EMBY权限问题"><a href="#解决EMBY权限问题" class="headerlink" title="解决EMBY权限问题"></a>解决EMBY权限问题</h3><p>emby安装完默认是emby用户运行，可能导致一系列权限问题，比如调用GPU无权限、挂载的媒体库目录无写入权限，有两种方法解决问题。</p>
+<h4 id="方法一：直接root用户运行emby"><a href="#方法一：直接root用户运行emby" class="headerlink" title="方法一：直接root用户运行emby"></a>方法一：直接root用户运行emby</h4><p>建议此方法，最简单，方便，快速，一劳永逸！</p>
+<h5 id="修改emby-server-service文件"><a href="#修改emby-server-service文件" class="headerlink" title="修改emby-server.service文件"></a>修改emby-server.service文件</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /lib/systemd/system/emby-server.service</span><br></pre></td></tr></table></figure>
+<p>这样如下修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Emby Server is a personal media server with apps on just about every device</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=/etc/emby-server.conf</span><br><span class="line">WorkingDirectory=/opt/emby-server</span><br><span class="line">ExecStart=/opt/emby-server/bin/emby-server</span><br><span class="line">RestartForceExitStatus=3</span><br><span class="line">User=root <span class="comment"># 原本应该为emby，修改此处用户为root即可</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<h5 id="重载systemd"><a href="#重载systemd" class="headerlink" title="重载systemd"></a>重载systemd</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+<h5 id="重启emby-server"><a href="#重启emby-server" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
+<h4 id="方法二：给emby用户各种权限"><a href="#方法二：给emby用户各种权限" class="headerlink" title="方法二：给emby用户各种权限"></a>方法二：给emby用户各种权限</h4><p>以赋予核显权限为例，媒体库目录如果无法写入也可类似方法解决！</p>
+<h5 id="查看lxc容器内核显"><a href="#查看lxc容器内核显" class="headerlink" title="查看lxc容器内核显"></a>查看lxc容器内核显</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -lh /dev/dri/</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-qbci-5.png" alt="img"><br>不知为何，发现lxc内核显设备用户组与PVE中不一样，需要给emby用户访问权限</p>
+<h5 id="查看emby用户的组权限"><a href="#查看emby用户的组权限" class="headerlink" title="查看emby用户的组权限"></a>查看emby用户的组权限</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">groups</span> emby</span><br></pre></td></tr></table></figure>
+<h5 id="将emby用户加入核显设备的用户组"><a href="#将emby用户加入核显设备的用户组" class="headerlink" title="将emby用户加入核显设备的用户组"></a>将emby用户加入核显设备的用户组</h5><p>缺啥补啥，我只缺sgx组权限，则只加sgx组</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG sgx emby</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-qbci-6.png" alt="img"></p>
+<h5 id="重启emby-server-1"><a href="#重启emby-server-1" class="headerlink" title="重启emby-server"></a>重启emby-server</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart emby-server</span><br></pre></td></tr></table></figure>
+
+<h3 id="进入emby-web"><a href="#进入emby-web" class="headerlink" title="进入emby web"></a>进入emby web</h3><p>接下来进入emby就可以看到硬解的编码器了<br><img src="/../images/image-qbci-7.png" alt="img"><br>播放时调整视频分辨率后有显示硬解图标<br><img src="/../images/image-qbci-8.jpg" alt="img"></p>
+<h3 id="可安装intel-gpu-tools查看gpu占用"><a href="#可安装intel-gpu-tools查看gpu占用" class="headerlink" title="可安装intel_gpu_tools查看gpu占用"></a>可安装intel_gpu_tools查看gpu占用</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install intel_gpu_tools -y</span><br></pre></td></tr></table></figure>
+<p>查看gpu占用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">intel_gpu_top</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/image-qbci-9.png" alt="img"><br>视频播放时显示占用，完美硬解！</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>lxc</category>
+        <category>emby</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>emby</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PVE创建lxc的openwrt容器</title>
+    <url>/posts/826300242.html</url>
+    <content><![CDATA[<p>在PVE中创建lxc的openwrt容器，更节省资源！</p>
+<span id="more"></span>
+
+<h2 id="下载openwrt的rootfs"><a href="#下载openwrt的rootfs" class="headerlink" title="下载openwrt的rootfs"></a>下载openwrt的rootfs</h2><p>不知道哪里有适用自己机器架构的openwrt rootfs文件的可以去<a href="https://downloads.openwrt.org/releases/23.05.3/targets/" title="点我去openwrt官网下载页">openwrt官网</a>下载</p>
+<p>op官网的固件很简洁，甚至要自己安装中文语言包，最好找适合自己的rootfs。</p>
+<h2 id="命令行创建openwrt-lxc"><a href="#命令行创建openwrt-lxc" class="headerlink" title="命令行创建openwrt lxc"></a>命令行创建openwrt lxc</h2><p>openwrt无法在webui中创建，只能通过命令创建。<br>修改以下命令的[]参数为自己对应的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create [lxc-id] <span class="built_in">local</span>:vztmpl/[openwrt的rootfs文件名称] \</span><br><span class="line">--rootfs local-lvm:[分配的空间大小，单位 G] \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname [lxc名称] \</span><br><span class="line">--<span class="built_in">arch</span> [机器架构 amd64/arm64] \</span><br><span class="line">--cores [分配几个核心] \</span><br><span class="line">--memory [分配内存大小] \</span><br><span class="line">--swap [分配swap大小] \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br><span class="line">-net1 bridge=vmbr0,name=eth1</span><br><span class="line"><span class="comment"># 多网口可按需配置，要几个加几个</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="示例配置"><a href="#示例配置" class="headerlink" title="示例配置"></a>示例配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 121 <span class="built_in">local</span>:vztmpl/immortalwrt-x86-64-generic-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:4 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname immortalwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0 \</span><br><span class="line">-net0 bridge=vmbr0,name=eth0</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>openwrt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>debian系统openvpn组网双向互访</title>
+    <url>/posts/687501595.html</url>
+    <content><![CDATA[<p>openvpn搭建，双向内网段互访，TCP组网，杜绝UDP中断。</p>
+<span id="more"></span>
+
+<p><strong>注意！！！</strong></p>
+<p>openvpn需要tun，如采用lxc方式，需要自行把tun挂到lxc内。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.cgroup2.devices.allow: c 10:200 rwm</span><br><span class="line">lxc.mount.entry: /dev/net/tun dev/net/tun none <span class="built_in">bind</span>,create=file</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="一键脚本做openvpn配置"><a href="#一键脚本做openvpn配置" class="headerlink" title="一键脚本做openvpn配置"></a>一键脚本做openvpn配置</h2><p>采用 <a href="https://github.com/angristan/openvpn-install">一键脚本</a> 部署，脚本开源，14K Start 安全可靠。</p>
+<p>部署前确定能访问GitHub。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh</span><br><span class="line"><span class="built_in">chmod</span> +x openvpn-install.sh</span><br><span class="line">./openvpn-install.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务端配置"><a href="#服务端配置" class="headerlink" title="服务端配置"></a>服务端配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Welcome to the OpenVPN installer!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">I need to ask you a few questions before starting the setup.</span><br><span class="line">You can leave the default options and just press enter <span class="keyword">if</span> you are ok with them.</span><br><span class="line"></span><br><span class="line">I need to know the IPv4 address of the network interface you want OpenVPN listening to.</span><br><span class="line">Unless your server is behind NAT, it should be your public IPv4 address.</span><br><span class="line">IP address: 192.168.2.118</span><br><span class="line">此处填IPV4公网IP或者域名</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Checking <span class="keyword">for</span> IPv6 connectivity...</span><br><span class="line"></span><br><span class="line">Your host does not appear to have IPv6 connectivity.</span><br><span class="line"></span><br><span class="line">Do you want to <span class="built_in">enable</span> IPv6 support (NAT)? [y/n]: n</span><br><span class="line">IPV6支持，有IPV4的话，可不开启</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">What port <span class="keyword">do</span> you want OpenVPN to listen to?</span><br><span class="line">   1) Default: 1194</span><br><span class="line">   2) Custom</span><br><span class="line">   3) Random [49152-65535]</span><br><span class="line">Port choice [1-3]: 3</span><br><span class="line">设置端口，不建议默认端口，可自定义或者随机</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">What protocol <span class="keyword">do</span> you want OpenVPN to use?</span><br><span class="line">UDP is faster. Unless it is not available, you shouldn<span class="string">&#x27;t use TCP.</span></span><br><span class="line"><span class="string">   1) UDP</span></span><br><span class="line"><span class="string">   2) TCP</span></span><br><span class="line"><span class="string">Protocol [1-2]: 2</span></span><br><span class="line"><span class="string">选择UDP还是TCP连接，国内环境建议TCP，不用担心被阻断</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">What DNS resolvers <span class="keyword">do</span> you want to use with the VPN?</span><br><span class="line">   1) Current system resolvers (from /etc/resolv.conf)</span><br><span class="line">   2) Self-hosted DNS Resolver (Unbound)</span><br><span class="line">   3) Cloudflare (Anycast: worldwide)</span><br><span class="line">   4) Quad9 (Anycast: worldwide)</span><br><span class="line">   5) Quad9 uncensored (Anycast: worldwide)</span><br><span class="line">   6) FDN (France)</span><br><span class="line">   7) DNS.WATCH (Germany)</span><br><span class="line">   8) OpenDNS (Anycast: worldwide)</span><br><span class="line">   9) Google (Anycast: worldwide)</span><br><span class="line">   10) Yandex Basic (Russia)</span><br><span class="line">   11) AdGuard DNS (Anycast: worldwide)</span><br><span class="line">   12) NextDNS (Anycast: worldwide)</span><br><span class="line">   13) Custom</span><br><span class="line">DNS [1-12]: 13</span><br><span class="line">设置下发到客户端的dns，可以13自定义</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.</span><br><span class="line">Enable compression? [y/n]: n</span><br><span class="line">是否开启压缩，人家说不安全，那就默认不开完事</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Do you want to customize encryption settings?</span><br><span class="line">Unless you know what you<span class="string">&#x27;re doing, you should stick with the default parameters provided by the script.</span></span><br><span class="line"><span class="string">Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN&#x27;</span>s defaults)</span><br><span class="line">See https://github.com/angristan/openvpn-install<span class="comment">#security-and-encryption to learn more.</span></span><br><span class="line"></span><br><span class="line">Customize encryption settings? [y/n]: n</span><br><span class="line">是否自定义加密设置，基本不需要，脚本默认的加密选项已经很高了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Okay, that was all I needed. We are ready to setup your OpenVPN server now.</span><br><span class="line">You will be able to generate a client at the end of the installation.</span><br><span class="line">Press any key to <span class="built_in">continue</span>...</span><br><span class="line">服务端配置完事了，回车等待安装完成即可！确保网络畅通</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端配置"><a href="#客户端配置" class="headerlink" title="客户端配置"></a>客户端配置</h3><h4 id="添加第一个客户端"><a href="#添加第一个客户端" class="headerlink" title="添加第一个客户端"></a>添加第一个客户端</h4><p>服务端配置完成脚本会自动开始创建第一个客户端</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Tell me a name <span class="keyword">for</span> the client.</span><br><span class="line">The name must consist of alphanumeric character. It may also include an underscore or a dash.</span><br><span class="line">Client name:<span class="built_in">test</span></span><br><span class="line">输入第一个客户端的名称</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Do you want to protect the configuration file with a password?</span><br><span class="line">(e.g. encrypt the private key with a password)</span><br><span class="line">   1) Add a passwordless client</span><br><span class="line">   2) Use a password <span class="keyword">for</span> the client</span><br><span class="line">Select an option [1-2]: 1</span><br><span class="line">是否密码加密配置文件，基本不需要吧？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Keypair and certificate request completed. Your files are:</span><br><span class="line">req: /etc/openvpn/easy-rsa/pki/reqs/test.req</span><br><span class="line">key: /etc/openvpn/easy-rsa/pki/private/test.key</span><br><span class="line">Using configuration from /etc/openvpn/easy-rsa/pki/0039a394/temp.89eaf293</span><br><span class="line">Check that the request matches the signature</span><br><span class="line">Signature ok</span><br><span class="line">The Subject<span class="string">&#x27;s Distinguished Name is as follows</span></span><br><span class="line"><span class="string">commonName            :ASN.1 12:&#x27;</span><span class="built_in">test</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">Certificate is to be certified until Jan 18 02:02:55 2035 GMT (3650 days)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Write out database with 1 new entries</span></span><br><span class="line"><span class="string">Database updated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Notice</span></span><br><span class="line"><span class="string">------</span></span><br><span class="line"><span class="string">Certificate created at:</span></span><br><span class="line"><span class="string">* /etc/openvpn/easy-rsa/pki/issued/test.crt</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Notice</span></span><br><span class="line"><span class="string">------</span></span><br><span class="line"><span class="string">Inline file created:</span></span><br><span class="line"><span class="string">* /etc/openvpn/easy-rsa/pki/inline/test.inline</span></span><br><span class="line"><span class="string">Client test added.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">The configuration file has been written to /root/test.ovpn.</span></span><br><span class="line"><span class="string">Download the .ovpn file and import it in your OpenVPN client.</span></span><br><span class="line"><span class="string">部署完成！</span></span><br></pre></td></tr></table></figure>
+
+<p>部署完成之后会在当前路径多出两个文件openvpn-install.sh、test.ovpn，openvpn-install.sh是一键脚本，test.ovpn是客户端配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ls</span></span><br><span class="line">openvpn-install.sh  test.ovpn</span><br></pre></td></tr></table></figure>
+
+<h4 id="另外再添加更多客户端"><a href="#另外再添加更多客户端" class="headerlink" title="另外再添加更多客户端"></a>另外再添加更多客户端</h4><p>只需输入 .&#x2F;openvpn-install.sh</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ./openvpn-install.sh</span></span><br><span class="line">Welcome to OpenVPN-install!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">It looks like OpenVPN is already installed.</span><br><span class="line"></span><br><span class="line">What <span class="keyword">do</span> you want to <span class="keyword">do</span>?</span><br><span class="line">   1) Add a new user</span><br><span class="line">   2) Revoke existing user</span><br><span class="line">   3) Remove OpenVPN</span><br><span class="line">   4) Exit</span><br><span class="line">Select an option [1-4]: 1</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>添加新用户</li>
+<li>移除指定用户</li>
+<li>删除整个openvpn</li>
+<li>退出脚本</li>
+</ol>
+<p>创建客户端操作和上面一样，操作完成之后路径下会多出客户端配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ls</span></span><br><span class="line">openvpn-install.sh  test2.ovpn  test.ovpn</span><br></pre></td></tr></table></figure>
+
+<p>客户端配置放到所需机器上使用即可！</p>
+<h3 id="debian命令行启动openvpn客户端"><a href="#debian命令行启动openvpn客户端" class="headerlink" title="debian命令行启动openvpn客户端"></a>debian命令行启动openvpn客户端</h3><h4 id="安装openvpn"><a href="#安装openvpn" class="headerlink" title="安装openvpn"></a>安装openvpn</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install openvpn -y</span><br></pre></td></tr></table></figure>
+
+<h4 id="放入配置文件"><a href="#放入配置文件" class="headerlink" title="放入配置文件"></a>放入配置文件</h4><p>把配置文件放到 &#x2F;etc&#x2F;openvpn&#x2F; 路径下，并且改名为 .conf 结尾</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> test.ovpn /etc/openvpn/test.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动openvpn客户端"><a href="#启动openvpn客户端" class="headerlink" title="启动openvpn客户端"></a>启动openvpn客户端</h4><p>命令中的test对应为配置文件的名称</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl start openvpn@<span class="built_in">test</span></span><br><span class="line">systemctl <span class="built_in">enable</span> openvpn@<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>另外服务端访问客户端内网需要添加防火墙规则，看下文。</p>
+<h2 id="组网配置"><a href="#组网配置" class="headerlink" title="组网配置"></a>组网配置</h2><p>openvpn需要iptables防火墙，如没有则安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install iptables -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置使客户端可访问服务端内网"><a href="#修改配置使客户端可访问服务端内网" class="headerlink" title="修改配置使客户端可访问服务端内网"></a>修改配置使客户端可访问服务端内网</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/</span><br><span class="line">nano server.conf</span><br></pre></td></tr></table></figure>
+
+<p>这行建议注释掉，意思为把客户端的所有流量全局走vpn</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>更换为，中间是服务端内网段，这样只有直接访问服务端内网IP才会走vpn</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">push <span class="string">&quot;route 192.168.2.0 255.255.255.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>有更多网段需求可以以上方式增加更多网段路由。</p>
+<h3 id="修改配置使服务端可访问客户端内网"><a href="#修改配置使服务端可访问客户端内网" class="headerlink" title="修改配置使服务端可访问客户端内网"></a>修改配置使服务端可访问客户端内网</h3><p>服务端配置文件添加一行，意思这个网段走vpn</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">route 192.168.3.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p>在&#x2F;etc&#x2F;openvpn&#x2F;ccd路径下创建并编辑客户端名称的文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/openvpn/ccd/test <span class="comment"># 我的客户端名称为test，所以写test</span></span><br></pre></td></tr></table></figure>
+
+<p>填入以下内容，修改中间网段为客户端网段</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iroute 192.168.3.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p><strong>客户端</strong> 添加防火墙规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o eth0 -j MASQUERADE</span><br><span class="line">iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<p>一个是服务端内网段，一个是vpn网段，修改为自己网段和网卡名。</p>
+<p>以上步骤缺一不可，否则服务端无法访问客户端内网段。</p>
+<h3 id="客户端防火墙规则持久化"><a href="#客户端防火墙规则持久化" class="headerlink" title="客户端防火墙规则持久化"></a>客户端防火墙规则持久化</h3><p>采用iptables-persistent持久化防火墙规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install iptables-persistent <span class="comment"># 安装 iptables-persistent</span></span><br><span class="line">systemctl start netfilter-persistent <span class="comment"># 启动 iptables-persistent</span></span><br><span class="line">systemctl <span class="built_in">enable</span> netfilter-persistent <span class="comment"># 允许 iptables-persistent 开机自启</span></span><br><span class="line">iptables-save &gt; /etc/iptables/rules.v4 <span class="comment"># 保存防火墙规则</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="iptables防火墙可能用到的命令"><a href="#iptables防火墙可能用到的命令" class="headerlink" title="iptables防火墙可能用到的命令"></a>iptables防火墙可能用到的命令</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -t nat -L -n -v</span><br><span class="line"><span class="comment"># 查看 nat 表防火墙规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o eth0 -j MASQUERADE</span><br><span class="line"><span class="comment"># 添加IP动态伪装规则</span></span><br><span class="line">iptables -t nat -D POSTROUTING -o eth0 -s 192.168.2.0/24 -j MASQUERADE</span><br><span class="line"><span class="comment"># 删除 nat 表某规则</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>内网穿透</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>debian部署tinc组网</title>
+    <url>/posts/2463057718.html</url>
+    <content><![CDATA[<p>Tinc 是一个开源、跨平台的虚拟私有网络（VPN），支持TCP、UDP，IPV4、IPV6组网，相较于Wireguard、Tailscale等基于UDP的VPN，能有更好的连接表现！</p>
+<span id="more"></span>
+
+<p><strong>主机A：</strong>有公网IP，做主节点，本机局域网IP为 192.168.2.111，内网网段 192.168.2.0&#x2F;24，设置VPN主机名为master，VPN IP为 10.0.0.1</p>
+<p><strong>主机B：</strong>无公网IP，做子节点，本机局域网IP为 192.168.3.57，内网网段 192.168.3.0&#x2F;24，设置VPN主机名为tinc1，VPN IP为 10.0.0.2</p>
+<p><strong>最终实现：</strong></p>
+<p>1、在主机A上可ping通 10.0.0.2，192.168.3.57 以及 192.168.3.0&#x2F;24 网段所有IP</p>
+<p>2、在主机B上可ping通 10.0.0.1，192.168.2.111 以及 192.168.2.0&#x2F;24 网段所有IP</p>
+<h3 id="部署主节点"><a href="#部署主节点" class="headerlink" title="部署主节点"></a>部署主节点</h3><h4 id="创建tinc-conf文件"><a href="#创建tinc-conf文件" class="headerlink" title="创建tinc.conf文件"></a>创建tinc.conf文件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Name = master</span></span><br><span class="line"><span class="string">Interface = tinc</span></span><br><span class="line"><span class="string">Mode = switch</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-up文件"><a href="#创建tinc-up文件" class="headerlink" title="创建tinc-up文件"></a>创建tinc-up文件</h4><p>tinc启动时运行的文件，用来创建接口，添加路由</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>10.0.0.2 为对端机器VPN IP，根据需要修改</p>
+<p>192.168.3.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-up &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip link set $INTERFACE up</span></span><br><span class="line"><span class="string">ip addr add 10.0.0.1/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip route add 192.168.3.0/24 via 10.0.0.2 dev $INTERFACE src 10.0.0.1 onlink</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-up</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-down文件"><a href="#创建tinc-down文件" class="headerlink" title="创建tinc-down文件"></a>创建tinc-down文件</h4><p>tinc关闭时运行的文件，用来删除路由，关闭接口</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>192.168.3.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-down &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip route del 192.168.3.0/24</span></span><br><span class="line"><span class="string">ip addr del 10.0.0.1/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip link set $INTERFACE down</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-down</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建主机master文件"><a href="#创建主机master文件" class="headerlink" title="创建主机master文件"></a>创建主机master文件</h4><p>domain.com 为公网IP或者公网IP绑定的域名，可为ddns域名</p>
+<p>10.0.0.1 为本机VPN IP，可修改</p>
+<p>11391，监听端口，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/hosts/master &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Address = domain.com</span></span><br><span class="line"><span class="string">Subnet = 10.0.0.1/32</span></span><br><span class="line"><span class="string">Port = 11391</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h4><p>需要两次回车</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tincd -n tinc_net -K</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署子节点"><a href="#部署子节点" class="headerlink" title="部署子节点"></a>部署子节点</h3><h4 id="创建tinc-conf文件-1"><a href="#创建tinc-conf文件-1" class="headerlink" title="创建tinc.conf文件"></a>创建tinc.conf文件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Name = tinc1</span></span><br><span class="line"><span class="string">Interface = tinc</span></span><br><span class="line"><span class="string">Mode = switch</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-up文件-1"><a href="#创建tinc-up文件-1" class="headerlink" title="创建tinc-up文件"></a>创建tinc-up文件</h4><p>tinc启动时运行的文件，用来创建接口，添加路由</p>
+<p>10.0.0.2 为本机VPN IP，可修改</p>
+<p>10.0.0.1 为对端机器VPN IP，根据需要修改</p>
+<p>192.168.2.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-up &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip link set $INTERFACE up</span></span><br><span class="line"><span class="string">ip addr add 10.0.0.2/24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip route add 192.168.2.0/24 via 10.0.0.1 dev $INTERFACE src 10.0.0.2 onlink</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-up</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建tinc-down文件-1"><a href="#创建tinc-down文件-1" class="headerlink" title="创建tinc-down文件"></a>创建tinc-down文件</h4><p>tinc关闭时运行的文件，用来删除路由，关闭接口</p>
+<p>10.0.0.2 为本机VPN IP，可修改</p>
+<p>192.168.2.0 对端机器内网网段，根据需要修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/tinc-down &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh</span></span><br><span class="line"><span class="string">ip route del 192.168.2.0/24</span></span><br><span class="line"><span class="string">ip addr del 10.0.0./24 dev $INTERFACE</span></span><br><span class="line"><span class="string">ip link set $INTERFACE down</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> +x /etc/tinc/tinc_net/tinc-down</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建主机tinc1文件"><a href="#创建主机tinc1文件" class="headerlink" title="创建主机tinc1文件"></a>创建主机tinc1文件</h4><p>10.0.0.2 为本机VPN IP，可修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/tinc/tinc_net/hosts/tinc1 &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">Subnet = 10.0.0.2/32</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="创建密钥-1"><a href="#创建密钥-1" class="headerlink" title="创建密钥"></a>创建密钥</h4><p>需要两次回车</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tincd -n tinc_net -K</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="交换公钥"><a href="#交换公钥" class="headerlink" title="交换公钥"></a>交换公钥</h3><h4 id="公钥文件为："><a href="#公钥文件为：" class="headerlink" title="公钥文件为："></a>公钥文件为：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/etc/tinc/tinc_net/hosts/</span><br></pre></td></tr></table></figure>
+
+<p>目录下的主机文件，将其相互复制到对应的主机即可！</p>
+<p>自行通过各种方式将密钥，例如scp，winscp，ftp……</p>
+<h4 id="分别启动tuic"><a href="#分别启动tuic" class="headerlink" title="分别启动tuic"></a>分别启动tuic</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> tinc@tinc_net</span><br><span class="line">systemctl start tinc@tinc_net</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="防火墙实现IP动态伪装"><a href="#防火墙实现IP动态伪装" class="headerlink" title="防火墙实现IP动态伪装"></a>防火墙实现IP动态伪装</h3><p>必须有防火墙做IP动态伪装，否则无法联通对端内网所有IP</p>
+<p>示例为debian网络出口为eth0的情况下</p>
+<h4 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nftables"><a href="#nftables" class="headerlink" title="nftables"></a>nftables</h4><ul>
+<li><strong>临时生效</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nft add table ip nat</span><br><span class="line">nft add chain ip nat postrouting &#123; <span class="built_in">type</span> nat hook postrouting priority 100 \; &#125;</span><br><span class="line">nft add rule ip nat postrouting oifname <span class="string">&quot;eth0&quot;</span> masquerade</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>长期有效</strong></li>
+</ul>
+<p>写入规则</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/nftables.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">table ip nat &#123;</span></span><br><span class="line"><span class="string">    chain postrouting &#123;</span></span><br><span class="line"><span class="string">        type nat hook postrouting priority 100; policy accept;</span></span><br><span class="line"><span class="string">        oifname &quot;eth0&quot; masquerade;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>加载使其生效</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nft -f /etc/nftables.conf</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>内网穿透</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang笔记</title>
+    <url>/posts/1059068992.html</url>
+    <content><![CDATA[<p>会一点python和js，但是这类解释型语言需要安装庞大的环境，无法适用所有架构或机器，现从零开始学golang，为了能够编写一些自己的小工具，使其在任何架构机器都能运行！</p>
+<span id="more"></span>
+
+<h2 id="最简代码"><a href="#最简代码" class="headerlink" title="最简代码"></a>最简代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> age = <span class="number">18</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;Hello Word!&quot;</span>)</span><br><span class="line">	fmt.Println(age)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="直接编译运行"><a href="#直接编译运行" class="headerlink" title="直接编译运行"></a>直接编译运行</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编译二进制"><a href="#编译二进制" class="headerlink" title="编译二进制"></a>编译二进制</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux下交叉编译"><a href="#Linux下交叉编译" class="headerlink" title="Linux下交叉编译"></a>Linux下交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="windows下cmd交叉编译"><a href="#windows下cmd交叉编译" class="headerlink" title="windows下cmd交叉编译"></a>windows下cmd交叉编译</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> GOOS=linux</span><br><span class="line"><span class="built_in">set</span> GOARCH=amd64</span><br><span class="line"><span class="built_in">set</span> CGO_ENABLED=0</span><br><span class="line">go build -trimpath -ldflags=<span class="string">&quot;-s -w&quot;</span> main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看支持交叉编译的所有架构类型"><a href="#查看支持交叉编译的所有架构类型" class="headerlink" title="查看支持交叉编译的所有架构类型"></a>查看支持交叉编译的所有架构类型</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go tool dist list</span><br></pre></td></tr></table></figure>
+
+<h4 id="目前支持如下架构"><a href="#目前支持如下架构" class="headerlink" title="目前支持如下架构"></a>目前支持如下架构</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aix/ppc64</span><br><span class="line">android/386</span><br><span class="line">android/amd64</span><br><span class="line">android/arm</span><br><span class="line">android/arm64</span><br><span class="line">darwin/amd64</span><br><span class="line">darwin/arm64</span><br><span class="line">dragonfly/amd64</span><br><span class="line">freebsd/386</span><br><span class="line">freebsd/amd64</span><br><span class="line">freebsd/arm</span><br><span class="line">freebsd/arm64</span><br><span class="line">freebsd/riscv64</span><br><span class="line">illumos/amd64</span><br><span class="line">ios/amd64</span><br><span class="line">ios/arm64</span><br><span class="line">js/wasm</span><br><span class="line">linux/386</span><br><span class="line">linux/amd64</span><br><span class="line">linux/arm</span><br><span class="line">linux/arm64</span><br><span class="line">linux/loong64</span><br><span class="line">linux/mips</span><br><span class="line">linux/mips64</span><br><span class="line">linux/mips64le</span><br><span class="line">linux/mipsle</span><br><span class="line">linux/ppc64</span><br><span class="line">linux/ppc64le</span><br><span class="line">linux/riscv64</span><br><span class="line">linux/s390x</span><br><span class="line">netbsd/386</span><br><span class="line">netbsd/amd64</span><br><span class="line">netbsd/arm</span><br><span class="line">netbsd/arm64</span><br><span class="line">openbsd/386</span><br><span class="line">openbsd/amd64</span><br><span class="line">openbsd/arm</span><br><span class="line">openbsd/arm64</span><br><span class="line">openbsd/ppc64</span><br><span class="line">plan9/386</span><br><span class="line">plan9/amd64</span><br><span class="line">plan9/arm</span><br><span class="line">solaris/amd64</span><br><span class="line">wasip1/wasm</span><br><span class="line">windows/386</span><br><span class="line">windows/amd64</span><br><span class="line">windows/arm</span><br><span class="line">windows/arm64</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo密钥登录GitHub</title>
+    <url>/posts/3267584825.html</url>
+    <content><![CDATA[<p>hexo密钥登录GitHub</p>
+<span id="more"></span>
+<h2 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一路回车即可</p>
+<h2 id="打印出公钥"><a href="#打印出公钥" class="headerlink" title="打印出公钥"></a>打印出公钥</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<p>将打印出的公钥添加到GitHub</p>
+<h2 id="测试是否连接成功"><a href="#测试是否连接成功" class="headerlink" title="测试是否连接成功"></a>测试是否连接成功</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改hexo-config-yml文件"><a href="#修改hexo-config-yml文件" class="headerlink" title="修改hexo _config.yml文件"></a>修改hexo _config.yml文件</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="enjoy！"><a href="#enjoy！" class="headerlink" title="enjoy！"></a>enjoy！</h3>]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux设置临时代理及清除</title>
+    <url>/posts/697366212.html</url>
+    <content><![CDATA[<p>记录一下linux机器代理的设置方法</p>
+<span id="more"></span>
+
+<p>设置代理</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">&quot;http://192.168.8.92:7890&quot;</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="string">&quot;http://192.168.8.92:7890&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>清除代理</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">unset</span> http_proxy</span><br><span class="line"><span class="built_in">unset</span> https_proxy</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>lxc安装桌面并且中文化</title>
+    <url>/posts/2567301303.html</url>
+    <content><![CDATA[<p>在PVE下安装debian模板的lxc容器，并安装xfce桌面，做好中文化！</p>
+<span id="more"></span>
+
+<p>如要驱动核显设备和挂载一些文件，最好使用特权容器，避免某些权限问题！</p>
+<p>lxc设置配置越高越好！</p>
+<h3 id="安装XFCE桌面"><a href="#安装XFCE桌面" class="headerlink" title="安装XFCE桌面"></a>安装XFCE桌面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tasksel</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803122121194.png" alt="image-20240803122121194"></p>
+<h3 id="安装XRDP"><a href="#安装XRDP" class="headerlink" title="安装XRDP"></a>安装XRDP</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install xrdp -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="新建用户"><a href="#新建用户" class="headerlink" title="新建用户"></a>新建用户</h3><p>新建一个使用桌面的用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adduser &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="授予权限"><a href="#授予权限" class="headerlink" title="授予权限"></a>授予权限</h3><p>授予桌面登录权限和使用sudo的权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">usermod -aG audio,video,sudo &lt;username&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="安装中文字体和输入法"><a href="#安装中文字体和输入法" class="headerlink" title="安装中文字体和输入法"></a>安装中文字体和输入法</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install fonts-wqy-zenhei ibus ibus-pinyin -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置中文"><a href="#配置中文" class="headerlink" title="配置中文"></a>配置中文</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dpkg-reconfigure locales</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132440939.png" alt="image-20240803132440939"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132459694.png" alt="image-20240803132459694"></p>
+<h3 id="重启lxc"><a href="#重启lxc" class="headerlink" title="重启lxc"></a>重启lxc</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<p>重启之后使用win远程桌面使用新创建的用户登录即可！</p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803132921308.png" alt="image-20240803132921308"></p>
+<p><img src="/../images/lxc%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E4%B8%AD%E6%96%87%E5%8C%96/image-20240803133018707.png" alt="image-20240803133018707"></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>pve</category>
+        <category>lxc</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>pve</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openwrt使用natmap打洞及防火墙配置</title>
+    <url>/posts/184979697.html</url>
+    <content><![CDATA[<p>在openwrt主路由上使用natmap来实现内网穿透，达到近乎公网IP的体验！</p>
+<span id="more"></span>
+
+<p>首先openwrt需要是NAT1环境才行，家宽几乎都是。</p>
+<h3 id="安装luci-app-natmap"><a href="#安装luci-app-natmap" class="headerlink" title="安装luci-app-natmap"></a>安装luci-app-natmap</h3><p>从这个链接下载ipk文件安装，或者openwrt包管理器安装</p>
+<p><a href="https://github.com/blueberry-pie-11/luci-app-natmap/releases">luci-app-natmap下载链接(不一定适配所有机器)</a></p>
+<h3 id="创建通知脚本"><a href="#创建通知脚本" class="headerlink" title="创建通知脚本"></a>创建通知脚本</h3><p>创建一个shell脚本，实现需要的所有功能，如ddns，上传到substore，修改防火墙规则，发送通知等…</p>
+<p>脚本位置可放在&#x2F;root&#x2F;ddns_natmap.sh</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /root/ddns_natmap.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以下为脚本内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cloudflare ddns</span></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改openwrt防火墙</span></span><br><span class="line">rule_name=<span class="string">&quot;natmap&quot;</span> <span class="comment">#防火墙规则名称</span></span><br><span class="line">dest_port=<span class="string">&quot;<span class="variable">$&#123;4&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> ! uci show firewall | grep -q <span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span>; <span class="keyword">then</span></span><br><span class="line">    uci add firewall rule</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].name=<span class="string">&quot;<span class="variable">$&#123;rule_name&#125;</span>&quot;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].target=<span class="string">&#x27;ACCEPT&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].src=<span class="string">&#x27;wan&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].family=<span class="string">&#x27;ipv4&#x27;</span></span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[-1].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    rule_num=$(uci show firewall | grep <span class="variable">$&#123;rule_name&#125;</span> | awk -F<span class="string">&#x27;[][]&#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line">    uci <span class="built_in">set</span> firewall.@rule[<span class="variable">$&#123;rule_num&#125;</span>].dest_port=<span class="string">&quot;<span class="variable">$&#123;dest_port&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">    uci commit firewall</span><br><span class="line">    /etc/init.d/firewall reload</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传到substore  可浏览器F12抓包直接获取curl (api示例)</span></span><br><span class="line">curl --location --request PATCH <span class="string">&#x27;http://192.168.1.100:3001/aaa/api/sub/natmap&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;natmap&quot;,</span></span><br><span class="line"><span class="string">    &quot;displayName&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;mergeSources&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;ignoreFailedRemoteSub&quot;: false,</span></span><br><span class="line"><span class="string">    &quot;icon&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;process&quot;: [</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            &quot;type&quot;: &quot;Quick Setting Operator&quot;,</span></span><br><span class="line"><span class="string">            &quot;args&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;useless&quot;: &quot;DISABLED&quot;,</span></span><br><span class="line"><span class="string">                &quot;udp&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;scert&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;tfo&quot;: &quot;DEFAULT&quot;,</span></span><br><span class="line"><span class="string">                &quot;vmess aead&quot;: &quot;DEFAULT&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    ],</span></span><br><span class="line"><span class="string">    &quot;source&quot;: &quot;local&quot;,</span></span><br><span class="line"><span class="string">    &quot;url&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;content&quot;: &quot;home_ss_v4 = Shadowsocks,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;,&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;,aes-128-gcm,\&quot;&lt;uuid&gt;\&quot;,fast-open=false,udp=true&quot;,</span></span><br><span class="line"><span class="string">    &quot;ua&quot;: &quot;&quot;,</span></span><br><span class="line"><span class="string">    &quot;display-name&quot;: &quot;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送IP及端口信息到外部数据库存储 (api示例)</span></span><br><span class="line">curl --location --request PUT <span class="string">&#x27;https://&lt;domain&gt;/?token=aaa&amp;key=bbb&#x27;</span> \</span><br><span class="line">--header <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">--data <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;ip&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;1&#125;</span>&quot;</span><span class="string">&#x27;&quot;,</span></span><br><span class="line"><span class="string">    &quot;port&quot;: &quot;&#x27;</span><span class="string">&quot;<span class="variable">$&#123;2&#125;</span>&quot;</span><span class="string">&#x27;&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送bark通知 (api示例)</span></span><br><span class="line">curl https://api.day.app/&lt;barkToken&gt;/nat穿透信息已更改/<span class="variable">$&#123;1&#125;</span>:<span class="variable">$&#123;2&#125;</span>%0a<span class="variable">$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>创建完授予执行权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /root/ddns_natmap.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置natmap"><a href="#配置natmap" class="headerlink" title="配置natmap"></a>配置natmap</h3><p>如图配置</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805144503358.png" alt="image-20240805144503358"></p>
+<p>打洞成功，应能如下图显示！</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805144628170.png" alt="image-20240805144628170"></p>
+<p>在网络-防火墙-通信规则中，应有如下规则</p>
+<p><img src="/../images/openwrt%E4%BD%BF%E7%94%A8natmap%E6%89%93%E6%B4%9E%E5%8F%8A%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE/image-20240805152514192.png" alt="image-20240805152514192"></p>
+]]></content>
+      <categories>
+        <category>openwrt</category>
+        <category>natmap</category>
+        <category>内网穿透</category>
+      </categories>
+      <tags>
+        <tag>openwrt</tag>
+        <tag>内网穿透</tag>
+        <tag>natmap</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pve搭建lxc openwrt并直通网卡</title>
+    <url>/posts/2444221817.html</url>
+    <content><![CDATA[<p>直通pve的物理网卡给openwrt lxc，用于拨号等操作！</p>
+<span id="more"></span>
+
+<h3 id="搭建openwrt-lxc"><a href="#搭建openwrt-lxc" class="headerlink" title="搭建openwrt lxc"></a>搭建openwrt lxc</h3><p>直接命令创建lxc容器，不传递网卡参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pct create 119 <span class="built_in">local</span>:vztmpl/openwrt-23.05.4-x86-64-rootfs.tar.gz \</span><br><span class="line">--rootfs local-lvm:8 \</span><br><span class="line">--ostype unmanaged \</span><br><span class="line">--hostname openwrt \</span><br><span class="line">--<span class="built_in">arch</span> amd64 \</span><br><span class="line">--cores 4 \</span><br><span class="line">--memory 1024 \</span><br><span class="line">--swap 0</span><br></pre></td></tr></table></figure>
+
+<p>修改lxc配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/pve/lxc/119.conf</span><br></pre></td></tr></table></figure>
+
+<p>增加直通网卡及pppoe拨号设备和tun设备，直通网卡的指令顺序不能乱，否则启动openwrt失败或者会导致name参数不传递！！！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 第一个直通网卡</span></span><br><span class="line">lxc.net.0.type: phys</span><br><span class="line">lxc.net.0.link: enp2s0</span><br><span class="line">lxc.net.0.name: eth0</span><br><span class="line">lxc.net.0.flags: up</span><br><span class="line"><span class="comment"># 第二个直通网卡</span></span><br><span class="line">lxc.net.1.type: phys</span><br><span class="line">lxc.net.1.link: enp3s0</span><br><span class="line">lxc.net.1.name: eth1</span><br><span class="line">lxc.net.1.flags: up</span><br><span class="line"><span class="comment"># pve自带的openwrt基础组件配置</span></span><br><span class="line">lxc.include: /usr/share/lxc/config/openwrt.common.conf</span><br><span class="line"><span class="comment"># 挂载ppp设备，用于pppoe拨号</span></span><br><span class="line">lxc.cgroup2.devices.allow: c 108:0 rwm</span><br><span class="line">lxc.mount.entry: /dev/ppp dev/ppp none <span class="built_in">bind</span>,create=file</span><br><span class="line"><span class="comment"># 挂载tun设备</span></span><br><span class="line">lxc.cgroup2.devices.allow: c 10:200 rwm</span><br><span class="line">lxc.mount.entry: /dev/net/tun dev/net/tun none <span class="built_in">bind</span>,create=file</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="openwrt简单配置"><a href="#openwrt简单配置" class="headerlink" title="openwrt简单配置"></a>openwrt简单配置</h3><p>修改网络配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/init.d/network</span><br></pre></td></tr></table></figure>
+
+<h4 id="主路由拨号设置方法"><a href="#主路由拨号设置方法" class="headerlink" title="主路由拨号设置方法"></a>主路由拨号设置方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">config interface <span class="string">&#x27;loopback&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;lo&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;static&#x27;</span></span><br><span class="line">        option ipaddr <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">        option netmask <span class="string">&#x27;255.0.0.0&#x27;</span></span><br><span class="line"></span><br><span class="line">config globals <span class="string">&#x27;globals&#x27;</span></span><br><span class="line">        option ula_prefix <span class="string">&#x27;fd55:5742:661c::/48&#x27;</span></span><br><span class="line"></span><br><span class="line">config device</span><br><span class="line">        option name <span class="string">&#x27;br-lan&#x27;</span></span><br><span class="line">        option <span class="built_in">type</span> <span class="string">&#x27;bridge&#x27;</span></span><br><span class="line">        list ports <span class="string">&#x27;eth0&#x27;</span></span><br><span class="line"></span><br><span class="line">config interface <span class="string">&#x27;lan&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;br-lan&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;static&#x27;</span></span><br><span class="line">        option ipaddr <span class="string">&#x27;192.168.2.1&#x27;</span>    <span class="comment"># lan静态IP</span></span><br><span class="line">        option netmask <span class="string">&#x27;255.255.255.0&#x27;</span> <span class="comment"># 子网掩码</span></span><br><span class="line">        option ip6assign <span class="string">&#x27;60&#x27;</span></span><br><span class="line">        option defaultroute <span class="string">&#x27;0&#x27;</span></span><br><span class="line"></span><br><span class="line">config interface <span class="string">&#x27;wan&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;pppoe&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;eth1&#x27;</span></span><br><span class="line">        option username <span class="string">&#x27;aaaa&#x27;</span> <span class="comment"># pppoe拨号账户</span></span><br><span class="line">        option password <span class="string">&#x27;bbbb&#x27;</span> <span class="comment"># pppoe拨号密码</span></span><br><span class="line">        option ipv6 <span class="string">&#x27;auto&#x27;</span></span><br><span class="line">        </span><br><span class="line">config interface <span class="string">&#x27;wan6&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;eth1&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;dhcpv6&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="旁路由设置方法"><a href="#旁路由设置方法" class="headerlink" title="旁路由设置方法"></a>旁路由设置方法</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">config interface <span class="string">&#x27;loopback&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;lo&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;static&#x27;</span></span><br><span class="line">        option ipaddr <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">        option netmask <span class="string">&#x27;255.0.0.0&#x27;</span></span><br><span class="line"></span><br><span class="line">config globals <span class="string">&#x27;globals&#x27;</span></span><br><span class="line">        option ula_prefix <span class="string">&#x27;fd55:5742:661c::/48&#x27;</span></span><br><span class="line"></span><br><span class="line">config device</span><br><span class="line">        option name <span class="string">&#x27;br-lan&#x27;</span></span><br><span class="line">        option <span class="built_in">type</span> <span class="string">&#x27;bridge&#x27;</span></span><br><span class="line">        list ports <span class="string">&#x27;eth0&#x27;</span></span><br><span class="line"></span><br><span class="line">config interface <span class="string">&#x27;lan&#x27;</span></span><br><span class="line">        option device <span class="string">&#x27;br-lan&#x27;</span></span><br><span class="line">        option proto <span class="string">&#x27;static&#x27;</span></span><br><span class="line">        option ipaddr <span class="string">&#x27;192.168.2.119&#x27;</span>  <span class="comment"># lan静态IP</span></span><br><span class="line">        option netmask <span class="string">&#x27;255.255.255.0&#x27;</span> <span class="comment"># 子网掩码</span></span><br><span class="line">        option ip6assign <span class="string">&#x27;60&#x27;</span></span><br><span class="line">        option gateway <span class="string">&#x27;192.168.2.103&#x27;</span> <span class="comment"># 网关</span></span><br><span class="line">        list dns <span class="string">&#x27;192.168.2.105&#x27;</span>       <span class="comment"># DNS</span></span><br></pre></td></tr></table></figure>
+
+<p>旁路由需要配置网关，dns，并且删除dhcp配置文件，否则无法联网</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/config/dhcp /etc/config/dhcp.bak</span><br></pre></td></tr></table></figure>
+
+<p>此命令只是将其重命名了，以后如果需要的话再重命名回来即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/config/dhcp.bak /etc/config/dhcp</span><br></pre></td></tr></table></figure>
+
+<p>重启openwrt</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<p>因为openwrt官方rootfs太过精简，所以需要下载中文字体及一些必要程序</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install vim curl luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-opkg-zh-cn</span><br></pre></td></tr></table></figure>
+
+<p>现在可插上网线进入openwrt web页面！</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>lxc</category>
+        <category>openwrt</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>openwrt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh连接git仓库</title>
+    <url>/posts/3590228679.html</url>
+    <content><![CDATA[<p>使用ssh连接git仓库！</p>
+<span id="more"></span>
+
+<h3 id="创建密钥对"><a href="#创建密钥对" class="headerlink" title="创建密钥对"></a>创建密钥对</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;your_email@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="添加公钥到GitHub"><a href="#添加公钥到GitHub" class="headerlink" title="添加公钥到GitHub"></a>添加公钥到GitHub</h3><p>公钥文件为”~&#x2F;.ssh&#x2F;id_rsa.pub”，添加到GitHub</p>
+<p><img src="/../images/ssh%E8%BF%9E%E6%8E%A5git%E4%BB%93%E5%BA%93/image-20240722231711784.png" alt="img"></p>
+<h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>显示如下类似输出则可以连接上</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Hi 你的用户名! You<span class="string">&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span></span><br></pre></td></tr></table></figure>
+
+<p>如果无法连接，也可以尝试443端口连接</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -T -p 443 git@ssh.github.com</span><br></pre></td></tr></table></figure>
+
+<p>如果443端口可以连接，那么修改”~&#x2F;.ssh&#x2F;config”文件，添加下列内容，以后就默认是443端口连接了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    Hostname ssh.github.com</span><br><span class="line">    Port 443</span><br><span class="line">    User git</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>github</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为debian添加rc.local开机自启服务</title>
+    <url>/posts/2550623555.html</url>
+    <content><![CDATA[<p>debian11及以上没有rc.local这个开机自启文件了，某些时候有些许不便，但是我们可以把它加回来！</p>
+<span id="more"></span>
+<h2 id="写入rc-local文件"><a href="#写入rc-local文件" class="headerlink" title="写入rc.local文件"></a>写入rc.local文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/rc.local &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/sh -e</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># rc.local</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># This script is executed at the end of each multiuser runlevel.</span></span><br><span class="line"><span class="string"># Make sure that the script will &quot;exit 0&quot; on success or any other</span></span><br><span class="line"><span class="string"># value on error.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># In order to enable or disable this script just change the execution</span></span><br><span class="line"><span class="string"># bits.</span></span><br><span class="line"><span class="string">#</span></span><br><span class="line"><span class="string"># By default this script does nothing.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">exit 0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>可以在“exit 0”之上添加需要开机执行的命令。</p>
+<h3 id="授予执行权限"><a href="#授予执行权限" class="headerlink" title="授予执行权限"></a>授予执行权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<h2 id="写入systemd文件"><a href="#写入systemd文件" class="headerlink" title="写入systemd文件"></a>写入systemd文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /lib/systemd/system/rc-local.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=/etc/rc.local Compatibility</span></span><br><span class="line"><span class="string">Documentation=man:systemd-rc-local-generator(8)</span></span><br><span class="line"><span class="string">ConditionFileIsExecutable=/etc/rc.local</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=forking</span></span><br><span class="line"><span class="string">ExecStart=/etc/rc.local start</span></span><br><span class="line"><span class="string">TimeoutSec=0</span></span><br><span class="line"><span class="string">RemainAfterExit=yes</span></span><br><span class="line"><span class="string">GuessMainPID=no</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重载配置以及设置rc-local开机自启"><a href="#重载配置以及设置rc-local开机自启" class="headerlink" title="重载配置以及设置rc.local开机自启"></a>重载配置以及设置rc.local开机自启</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rc-local.service</span><br><span class="line">systemctl <span class="built_in">enable</span> rc-local.service</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为小存储空间机器拓展空间的方法</title>
+    <url>/posts/2933134504.html</url>
+    <content><![CDATA[<p>部分机器本身存储空间很小，但是又想玩docker、lxc等占用空间的东西，可以采用此方法！</p>
+<span id="more"></span>
+
+<p>本文采用4g随身wifi，debian12系统可用！</p>
+<h2 id="挂载一块硬盘"><a href="#挂载一块硬盘" class="headerlink" title="挂载一块硬盘"></a>挂载一块硬盘</h2><p>查看硬盘uuid</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">blkid</span><br></pre></td></tr></table></figure>
+
+<p>得到输出，找出硬盘的uuid</p>
+<p><img src="/../images/image-bprp.png" alt="img"></p>
+<p>创建挂载点文件夹并把挂载命令写入rc.local，每次开机都会通过uuid挂载硬盘，uuid需使用自己硬盘的！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /mnt/sda1</span><br><span class="line">sed -i <span class="string">&#x27;/exit 0/i\mount -v UUID=806912d2-26ee-4924-a3b1-4b59f462d89c /mnt/sda1&#x27;</span> /etc/rc.local</span><br></pre></td></tr></table></figure>
+
+<p>rc.local会在开机时自动运行，本次还是手动执行挂载。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mount -v UUID=806912d2-26ee-4924-a3b1-4b59f462d89c /mnt/sda1</span><br></pre></td></tr></table></figure>
+
+<h2 id="为docker拓展空间"><a href="#为docker拓展空间" class="headerlink" title="为docker拓展空间"></a>为docker拓展空间</h2><p>docker的目录在&#x2F;var&#x2F;lib&#x2F;docker，先停止docker进程</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop docker</span><br></pre></td></tr></table></figure>
+
+<p>移动docker文件夹到指定目录（也可先备份）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /var/lib/docker /mnt/sda1/</span><br></pre></td></tr></table></figure>
+
+<p>建立软链接</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /mnt/sda1/docker /var/lib/docker</span><br></pre></td></tr></table></figure>
+
+<p>启动docker</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<p>之后正常操作docker即可，所有数据实际保存在挂载的硬盘上！</p>
+<h2 id="为lxc拓展空间"><a href="#为lxc拓展空间" class="headerlink" title="为lxc拓展空间"></a>为lxc拓展空间</h2><p>lxc的目录在&#x2F;var&#x2F;lib&#x2F;lxc，移动lxc文件夹到硬盘上（也可先备份），需要停止所有lxc，lxc相关命令看<a href="">这里</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /var/lib/lxc /mnt/sda1/</span><br></pre></td></tr></table></figure>
+
+<p>建立软链接</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /mnt/sda1/lxc /var/lib/lxc</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用watchtower自动更新容器</title>
+    <url>/posts/527465299.html</url>
+    <content><![CDATA[<p>使用watchtower更优雅地更新容器镜像，</p>
+<span id="more"></span>
+
+<h3 id="立刻更新容器镜像"><a href="#立刻更新容器镜像" class="headerlink" title="立刻更新容器镜像"></a>立刻更新容器镜像</h3><p>手动运行命令，立刻检查并更新指定的容器镜像，如不指定容器名，则检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --run-once \</span><br><span class="line">  --cleanup \</span><br><span class="line">  alist <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="自动定时更新容器镜像"><a href="#自动定时更新容器镜像" class="headerlink" title="自动定时更新容器镜像"></a>自动定时更新容器镜像</h3><p>后台自动运行，定时检查并更新指定的容器镜像，如不指定容器名，则定时检查更新所有容器的镜像，并删除旧镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">--cleanup <span class="comment"># 更新时清理旧镜像</span></span><br><span class="line">--interval 3600 <span class="comment"># 定时3600秒自动检测更新</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  containrrr/watchtower \</span><br><span class="line">  --cleanup \</span><br><span class="line">  --interval 3600 \</span><br><span class="line">  pro sub-store alist jackett <span class="comment"># 指定容器名，可多个，空格分离</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h4><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">watchtower:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">containrrr/watchtower</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">watchtower</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--cleanup</span> <span class="string">--interval</span> <span class="number">3600 </span><span class="string">pro</span> <span class="string">sub-store</span> <span class="string">alist</span> <span class="string">jackett</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">unless-stopped</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>公网IPV4的从无到有——natmap打洞</title>
+    <url>/posts/1357308105.html</url>
+    <content><![CDATA[<p>本文基于Debian而写。</p>
+<p>不知道干什么用？使用singbox在家搭建一个ss服务端，出门在外，手机配置内网IP分流到此节点，即可畅快使用内网IP访问家中服务！</p>
+<span id="more"></span>
+
+<p><a href="https://sing-box.sagernet.org/installation/package-manager/"><em>singbox服务端一键搭建点我</em></a></p>
+<h2 id="检测自己的nat类型"><a href="#检测自己的nat类型" class="headerlink" title="检测自己的nat类型"></a>检测自己的nat类型</h2><p>检测前一定要最大限度减少本地nat，路由器开dmz，或者直接拨号设备测试！</p>
+<h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>下载 <a href="https://github.com/HMBSbige/NatTypeTester/releases">NatTypeTester</a>，如下检测方法，结果是Full Cone则为nat1。</p>
+<p><img src="/../images/image-fpsz.png" alt="img"></p>
+<h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>使用python工具，pystun3。</p>
+<p>pystun3是pip包管理器安装，确保本机安装好了python3和pip</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install pystun3 <span class="comment"># 安装pystun3</span></span><br><span class="line"></span><br><span class="line">pystun3 <span class="comment"># 开始测试</span></span><br></pre></td></tr></table></figure>
+
+<p>结果如下，显示Full Cone则为nat1。</p>
+<p><img src="/../images/image-mfrk.png" alt="img"></p>
+<h2 id="安装natmap"><a href="#安装natmap" class="headerlink" title="安装natmap"></a>安装natmap</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -O /usr/bin/natmap https://github.com/heiher/natmap/releases/download/20240303/natmap-linux-arm64 &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/natmap</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="写入ddns脚本"><a href="#写入ddns脚本" class="headerlink" title="写入ddns脚本"></a>写入ddns脚本</h2><p>创建并授权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">touch</span> /usr/bin/ddns_natmap &amp;&amp; <span class="built_in">chmod</span> +x /usr/bin/ddns_natmap</span><br></pre></td></tr></table></figure>
+
+<p>此ddns脚本需要使用jq</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install jq</span><br></pre></td></tr></table></figure>
+
+<p>复制下方脚本内容，使用nano写入&#x2F;usr&#x2F;bin&#x2F;ddns_natmap，需要的信息自行补充！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">AUTH=<span class="string">&#x27;&#x27;</span> <span class="comment"># cf的授权token</span></span><br><span class="line">DOMAIN=<span class="string">&#x27;&#x27;</span> <span class="comment"># 主域名 eg：baidu.com</span></span><br><span class="line">RECORD_NAME=<span class="string">&#x27;&#x27;</span> <span class="comment"># 二级域名，这个才是实际IP更新的域名 eg：www.baidu.com   如果直接用主域名，那么直接填写主域名</span></span><br><span class="line"></span><br><span class="line">IP4P=<span class="variable">$&#123;3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的Cloudflare区域ID</span></span><br><span class="line">ZONE=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones?name=<span class="variable">$&#123;DOMAIN&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r <span class="string">&#x27;.result[0].id&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取指定域名的DNS记录ID</span></span><br><span class="line">RECORD=$(curl -s -X GET <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records?type=A&amp;name=<span class="variable">$&#123;RECORD_NAME&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">-H <span class="string">&quot;Content-Type: application/json&quot;</span> | jq -r .result[0].<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    curl -X PUT <span class="string">&quot;https://api.cloudflare.com/client/v4/zones/<span class="variable">$&#123;ZONE&#125;</span>/dns_records/<span class="variable">$&#123;RECORD&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Authorization: Bearer <span class="variable">$&#123;AUTH&#125;</span>&quot;</span> \</span><br><span class="line">        -H <span class="string">&quot;Content-Type:application/json&quot;</span> \</span><br><span class="line">        --data <span class="string">&quot;&#123;\&quot;type\&quot;:\&quot;AAAA\&quot;,\&quot;name\&quot;:\&quot;<span class="variable">$&#123;RECORD_NAME&#125;</span>\&quot;,\&quot;content\&quot;:\&quot;<span class="variable">$&#123;IP4P&#125;</span>\&quot;,\&quot;ttl\&quot;:60,\&quot;proxied\&quot;:false&#125;&quot;</span> &gt; /dev/null 2&gt; /dev/null</span><br><span class="line">    <span class="keyword">if</span> [ $? -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">break</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消这个注释并修改[bark-key]可在ip和端口改变时获得ios的推送，需要在ios上安装bark app</span></span><br><span class="line"><span class="comment">#curl https://api.day.app/[bark-key]/nat穿透信息改变/$&#123;1&#125;:$&#123;2&#125;%0a$&#123;3&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置natmap打洞转发"><a href="#设置natmap打洞转发" class="headerlink" title="设置natmap打洞转发"></a>设置natmap打洞转发</h2><p>需修改一下自己的转发IP和端口，以及超时时间之类信息</p>
+<p><strong>-T 参数是超时时间，默认是120，这个设置其实还是比较重要的，比如通过natmap打洞的隧道连接ssh时，如果120秒空闲的话，会直接断开ssh连接，我一般设置成3600</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/systemd/system/natmap.service &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=natmap server</span></span><br><span class="line"><span class="string">After=network.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=natmap -i eth0 -4 -s stunserver2024.stunprotocol.org -h qq.com -b [任意未使用端口或0(随机端口)] -t [转发的目标IP] -p [转发的目标端口] -T [超时时间秒] -e /usr/bin/ddns_natmap</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置开机自启"><a href="#设置开机自启" class="headerlink" title="设置开机自启"></a>设置开机自启</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start natmap.service</span><br><span class="line">systemctl <span class="built_in">enable</span> natmap.service</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="代理app解析使用"><a href="#代理app解析使用" class="headerlink" title="代理app解析使用"></a>代理app解析使用</h2><p>natmap上传的是<a href="https://github.com/heiher/natmap/wiki/faq#%E5%9F%9F%E5%90%8D%E8%AE%BF%E9%97%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84">IP4P格式</a>的IP，普通客户端无法识别，可在iOS上使用<a href="https://github.com/sub-store-org/Sub-Store/tree/master/config">sub-store</a>，或者<a href="https://xream.notion.site/Sub-Store-abe6a96944724dc6a36833d5c9ab7c87">服务器自建sub-store服务</a>来达到解析IP4P的效果！sub-store可以支持几乎所有客户端的转换！</p>
+<p><img src="/../images/image-ckxo.png" alt="img"></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>超低配Arm机器使用lxc容器</title>
+    <url>/posts/4215636886.html</url>
+    <content><![CDATA[<p>适用于大部分低配arm机器，如N1，甚至是410随身WiFi（需要有带有线网卡拓展坞，无线网卡无法开网桥），实现在低配机器上轻松AIO！部分代码取自Cooip！</p>
+<span id="more"></span>
+
+<h2 id="更新apt并安装lxc"><a href="#更新apt并安装lxc" class="headerlink" title="更新apt并安装lxc"></a>更新apt并安装lxc</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt update &amp;&amp; apt upgrade &amp;&amp; apt install lxc -y</span><br><span class="line">lxc-checkconfig</span><br></pre></td></tr></table></figure>
+
+<p>看到有一长溜输出即可！</p>
+<h2 id="手动配置网桥"><a href="#手动配置网桥" class="headerlink" title="手动配置网桥"></a>手动配置网桥</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nmtui</span><br></pre></td></tr></table></figure>
+<p>编辑连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/1.png" alt="1"></p>
+<p>添加网桥<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/2.png" alt="2"></p>
+<p>添加桥接设备<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/3.png" alt="3"></p>
+<p>选择类型为有线网卡<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/4.png" alt="4"></p>
+<p>输入有线网卡名<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/5.png" alt="5"></p>
+<p>开启开机自动连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/6.png" alt="6"></p>
+<p>配置一下有线网卡的连接<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/7.png" alt="7"></p>
+<p>关闭有线网卡的自动连接，避免开机时和网桥冲突。<br><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/8.png" alt="8"></p>
+<p>修改lxc桥接配置<br>修改为”false”</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nano /etc/default/lxc-net</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/9.png" alt="9"></p>
+<p>重启设备</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="建立第一个模版lxc容器"><a href="#建立第一个模版lxc容器" class="headerlink" title="建立第一个模版lxc容器"></a>建立第一个模版lxc容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-create --name template --template download -- --dist debian --release bookworm --<span class="built_in">arch</span> arm64 --server mirrors.tuna.tsinghua.edu.cn/lxc-images</span><br></pre></td></tr></table></figure>
+
+<p>会从清华源远程下载最新debian12的rootfs建立lxc容器</p>
+<h2 id="编辑lxc容器配置文件"><a href="#编辑lxc容器配置文件" class="headerlink" title="编辑lxc容器配置文件"></a>编辑lxc容器配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> &gt; /var/lib/lxc/template/config &amp;&amp; nano /var/lib/lxc/template/config</span><br></pre></td></tr></table></figure>
+
+<p>复制下方配置文件，粘贴到打开的文件中，按需修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc.include = /usr/share/lxc/config/common.conf</span><br><span class="line">lxc.arch = linux64</span><br><span class="line"></span><br><span class="line"><span class="comment"># Container specific configuration</span></span><br><span class="line">lxc.apparmor.profile = generated</span><br><span class="line">lxc.apparmor.allow_nesting = 1</span><br><span class="line">lxc.rootfs.path = <span class="built_in">dir</span>:/var/lib/lxc/template/rootfs</span><br><span class="line">lxc.uts.name = template</span><br><span class="line">lxc.start.auto = 1</span><br><span class="line">lxc.start.delay = 15</span><br><span class="line">lxc.group = onboot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡1</span></span><br><span class="line">lxc.net.0.type = veth</span><br><span class="line">lxc.net.0.link = lxcbr0</span><br><span class="line">lxc.net.0.flags = up</span><br><span class="line">lxc.net.0.hwaddr = 36:b0:b9:cf:2e:4g</span><br><span class="line">lxc.net.0.name = eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟网卡2 每添加一块虚拟网卡需改动一下mac使其不同，可加n个网卡</span></span><br><span class="line"><span class="comment">#lxc.net.1.type = veth</span></span><br><span class="line"><span class="comment">#lxc.net.1.link = lxcbr0</span></span><br><span class="line"><span class="comment">#lxc.net.1.flags = up</span></span><br><span class="line"><span class="comment">#lxc.net.1.hwaddr = 36:b0:b9:cf:2e:4f</span></span><br><span class="line"><span class="comment">#lxc.net.1.name = eth1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂载tun，如需搭建tailscale、mihomo之类需要依赖tun的可移除下方两条注释</span></span><br><span class="line"><span class="comment">#lxc.cgroup2.devices.allow = c 10:200 rwm</span></span><br><span class="line"><span class="comment">#lxc.mount.entry = /dev/net/tun dev/net/tun none bind,create=file</span></span><br></pre></td></tr></table></figure>
+
+<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
+<h2 id="启动并进入容器，初始化一下通用基本配置"><a href="#启动并进入容器，初始化一下通用基本配置" class="headerlink" title="启动并进入容器，初始化一下通用基本配置"></a>启动并进入容器，初始化一下通用基本配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-start template &amp;&amp; lxc-attach template </span><br></pre></td></tr></table></figure>
+
+<p>初始化配置看<a href="">这篇文章</a></p>
+<p>配置完以后按ctrl + d退出容器</p>
+<p>然后停止模版容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-stop template</span><br></pre></td></tr></table></figure>
+
+<h2 id="基于模版复制容器，自定义一下名称"><a href="#基于模版复制容器，自定义一下名称" class="headerlink" title="基于模版复制容器，自定义一下名称"></a>基于模版复制容器，自定义一下名称</h2><p>一定要模板处于停止状态才能复制！！！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-copy -n template -N newname</span><br></pre></td></tr></table></figure>
+
+<h2 id="按需修改新容器配置文件"><a href="#按需修改新容器配置文件" class="headerlink" title="按需修改新容器配置文件"></a>按需修改新容器配置文件</h2><p>或者不改启动lxc直接玩，反正主机名和mac地址在复制中会改好</p>
+<h2 id="设置服务文件开机自启，debian为例"><a href="#设置服务文件开机自启，debian为例" class="headerlink" title="设置服务文件开机自启，debian为例"></a>设置服务文件开机自启，debian为例</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">lxc.start.auto = 1</span><br><span class="line">lxc.group = onboot</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/%E8%B6%85%E4%BD%8E%E9%85%8DArm%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8lxc%E5%AE%B9%E5%99%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%96%B9%E6%A1%88/10.png" alt="10"></p>
+<p>在lxc配置文件中添加了以上配置，此lxc应该能够开机自启，如果还是不能开机自启，那么再配置以下自启服务。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nano /etc/systemd/system/lxc-start.service</span><br></pre></td></tr></table></figure>
+
+<p>复制下方配置文件粘贴进去</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=<span class="string">&quot;LXC autostart for lxc user&quot;</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/lxc-autostart --all</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=default.target</span><br></pre></td></tr></table></figure>
+
+<p>按下ctrl+x，再按y，回车，就保存并退出了。</p>
+<p>设置开机自启</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> lxc-start.service</span><br><span class="line">systemctl start lxc-start.service</span><br><span class="line">systemctl status lxc-start.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="lxc容器常用命令"><a href="#lxc容器常用命令" class="headerlink" title="lxc容器常用命令"></a>lxc容器常用命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lxc-attach name  <span class="comment">#进入lxc</span></span><br><span class="line">lxc-start name  <span class="comment">#启动lxc</span></span><br><span class="line">lxc-stop name  <span class="comment">#停止lxc</span></span><br><span class="line">lxc-destroy name  <span class="comment">#销毁lxc</span></span><br><span class="line">lxc-ls name <span class="comment">#列出所有lxc，可加-f查看详情</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="lxc相关配置文件路径"><a href="#lxc相关配置文件路径" class="headerlink" title="lxc相关配置文件路径"></a>lxc相关配置文件路径</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># lxc 自启等相关默认配置</span><br><span class="line">/etc/default/lxc</span><br><span class="line"># lxc 网络相关默认配置</span><br><span class="line">/etc/default/lxc-net</span><br><span class="line"># lxc 配置文件模板配置</span><br><span class="line">/etc/lxc/default.conf</span><br><span class="line"># 所有lxc所在目录</span><br><span class="line">/var/lib/lxc/</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lxc</tag>
+      </tags>
+  </entry>
+</search>

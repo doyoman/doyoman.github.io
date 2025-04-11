@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/IMG_6986.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/IMG_6986.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.olds.eu.org","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="openvpn搭建，双向内网段互访，TCP组网，杜绝UDP中断。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="debian系统openvpn组网双向互访">
+<meta property="og:url" content="https://blog.olds.eu.org/posts/687501595.html">
+<meta property="og:site_name" content="趣研思">
+<meta property="og:description" content="openvpn搭建，双向内网段互访，TCP组网，杜绝UDP中断。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-20T01:35:11.000Z">
+<meta property="article:modified_time" content="2025-01-20T01:35:11.000Z">
+<meta property="article:author" content="doyo">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="内网穿透">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://blog.olds.eu.org/posts/687501595.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>debian系统openvpn组网双向互访 | 趣研思</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">趣研思</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">乐趣、研究、思考！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-cloud">
+
+    <a href="/cloud/" rel="section"><i class="fa fa-cloud-download-alt fa-fw"></i>资源下载</a>
+
+  </li>
+        <li class="menu-item menu-item-pro">
+
+    <a href="/pro/" rel="section"><i class="fa fa-car-side fa-fw"></i>Pro 登录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.olds.eu.org/posts/687501595.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/IMG_6985.jpeg">
+      <meta itemprop="name" content="doyo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="趣研思">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          debian系统openvpn组网双向互访
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-20 09:35:11" itemprop="dateCreated datePublished" datetime="2025-01-20T09:35:11+08:00">2025-01-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">内网穿透</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>openvpn搭建，双向内网段互访，TCP组网，杜绝UDP中断。</p>
+<span id="more"></span>
+
+<p><strong>注意！！！</strong></p>
+<p>openvpn需要tun，如采用lxc方式，需要自行把tun挂到lxc内。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lxc.cgroup2.devices.allow: c 10:200 rwm</span><br><span class="line">lxc.mount.entry: /dev/net/tun dev/net/tun none <span class="built_in">bind</span>,create=file</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="一键脚本做openvpn配置"><a href="#一键脚本做openvpn配置" class="headerlink" title="一键脚本做openvpn配置"></a>一键脚本做openvpn配置</h2><p>采用 <a target="_blank" rel="noopener" href="https://github.com/angristan/openvpn-install">一键脚本</a> 部署，脚本开源，14K Start 安全可靠。</p>
+<p>部署前确定能访问GitHub。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh</span><br><span class="line"><span class="built_in">chmod</span> +x openvpn-install.sh</span><br><span class="line">./openvpn-install.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务端配置"><a href="#服务端配置" class="headerlink" title="服务端配置"></a>服务端配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Welcome to the OpenVPN installer!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">I need to ask you a few questions before starting the setup.</span><br><span class="line">You can leave the default options and just press enter <span class="keyword">if</span> you are ok with them.</span><br><span class="line"></span><br><span class="line">I need to know the IPv4 address of the network interface you want OpenVPN listening to.</span><br><span class="line">Unless your server is behind NAT, it should be your public IPv4 address.</span><br><span class="line">IP address: 192.168.2.118</span><br><span class="line">此处填IPV4公网IP或者域名</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Checking <span class="keyword">for</span> IPv6 connectivity...</span><br><span class="line"></span><br><span class="line">Your host does not appear to have IPv6 connectivity.</span><br><span class="line"></span><br><span class="line">Do you want to <span class="built_in">enable</span> IPv6 support (NAT)? [y/n]: n</span><br><span class="line">IPV6支持，有IPV4的话，可不开启</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">What port <span class="keyword">do</span> you want OpenVPN to listen to?</span><br><span class="line">   1) Default: 1194</span><br><span class="line">   2) Custom</span><br><span class="line">   3) Random [49152-65535]</span><br><span class="line">Port choice [1-3]: 3</span><br><span class="line">设置端口，不建议默认端口，可自定义或者随机</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">What protocol <span class="keyword">do</span> you want OpenVPN to use?</span><br><span class="line">UDP is faster. Unless it is not available, you shouldn<span class="string">&#x27;t use TCP.</span></span><br><span class="line"><span class="string">   1) UDP</span></span><br><span class="line"><span class="string">   2) TCP</span></span><br><span class="line"><span class="string">Protocol [1-2]: 2</span></span><br><span class="line"><span class="string">选择UDP还是TCP连接，国内环境建议TCP，不用担心被阻断</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">What DNS resolvers <span class="keyword">do</span> you want to use with the VPN?</span><br><span class="line">   1) Current system resolvers (from /etc/resolv.conf)</span><br><span class="line">   2) Self-hosted DNS Resolver (Unbound)</span><br><span class="line">   3) Cloudflare (Anycast: worldwide)</span><br><span class="line">   4) Quad9 (Anycast: worldwide)</span><br><span class="line">   5) Quad9 uncensored (Anycast: worldwide)</span><br><span class="line">   6) FDN (France)</span><br><span class="line">   7) DNS.WATCH (Germany)</span><br><span class="line">   8) OpenDNS (Anycast: worldwide)</span><br><span class="line">   9) Google (Anycast: worldwide)</span><br><span class="line">   10) Yandex Basic (Russia)</span><br><span class="line">   11) AdGuard DNS (Anycast: worldwide)</span><br><span class="line">   12) NextDNS (Anycast: worldwide)</span><br><span class="line">   13) Custom</span><br><span class="line">DNS [1-12]: 13</span><br><span class="line">设置下发到客户端的dns，可以13自定义</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Do you want to use compression? It is not recommended since the VORACLE attack makes use of it.</span><br><span class="line">Enable compression? [y/n]: n</span><br><span class="line">是否开启压缩，人家说不安全，那就默认不开完事</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Do you want to customize encryption settings?</span><br><span class="line">Unless you know what you<span class="string">&#x27;re doing, you should stick with the default parameters provided by the script.</span></span><br><span class="line"><span class="string">Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN&#x27;</span>s defaults)</span><br><span class="line">See https://github.com/angristan/openvpn-install<span class="comment">#security-and-encryption to learn more.</span></span><br><span class="line"></span><br><span class="line">Customize encryption settings? [y/n]: n</span><br><span class="line">是否自定义加密设置，基本不需要，脚本默认的加密选项已经很高了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Okay, that was all I needed. We are ready to setup your OpenVPN server now.</span><br><span class="line">You will be able to generate a client at the end of the installation.</span><br><span class="line">Press any key to <span class="built_in">continue</span>...</span><br><span class="line">服务端配置完事了，回车等待安装完成即可！确保网络畅通</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端配置"><a href="#客户端配置" class="headerlink" title="客户端配置"></a>客户端配置</h3><h4 id="添加第一个客户端"><a href="#添加第一个客户端" class="headerlink" title="添加第一个客户端"></a>添加第一个客户端</h4><p>服务端配置完成脚本会自动开始创建第一个客户端</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Tell me a name <span class="keyword">for</span> the client.</span><br><span class="line">The name must consist of alphanumeric character. It may also include an underscore or a dash.</span><br><span class="line">Client name:<span class="built_in">test</span></span><br><span class="line">输入第一个客户端的名称</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Do you want to protect the configuration file with a password?</span><br><span class="line">(e.g. encrypt the private key with a password)</span><br><span class="line">   1) Add a passwordless client</span><br><span class="line">   2) Use a password <span class="keyword">for</span> the client</span><br><span class="line">Select an option [1-2]: 1</span><br><span class="line">是否密码加密配置文件，基本不需要吧？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">Notice</span><br><span class="line">------</span><br><span class="line">Keypair and certificate request completed. Your files are:</span><br><span class="line">req: /etc/openvpn/easy-rsa/pki/reqs/test.req</span><br><span class="line">key: /etc/openvpn/easy-rsa/pki/private/test.key</span><br><span class="line">Using configuration from /etc/openvpn/easy-rsa/pki/0039a394/temp.89eaf293</span><br><span class="line">Check that the request matches the signature</span><br><span class="line">Signature ok</span><br><span class="line">The Subject<span class="string">&#x27;s Distinguished Name is as follows</span></span><br><span class="line"><span class="string">commonName            :ASN.1 12:&#x27;</span><span class="built_in">test</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">Certificate is to be certified until Jan 18 02:02:55 2035 GMT (3650 days)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Write out database with 1 new entries</span></span><br><span class="line"><span class="string">Database updated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Notice</span></span><br><span class="line"><span class="string">------</span></span><br><span class="line"><span class="string">Certificate created at:</span></span><br><span class="line"><span class="string">* /etc/openvpn/easy-rsa/pki/issued/test.crt</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Notice</span></span><br><span class="line"><span class="string">------</span></span><br><span class="line"><span class="string">Inline file created:</span></span><br><span class="line"><span class="string">* /etc/openvpn/easy-rsa/pki/inline/test.inline</span></span><br><span class="line"><span class="string">Client test added.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">The configuration file has been written to /root/test.ovpn.</span></span><br><span class="line"><span class="string">Download the .ovpn file and import it in your OpenVPN client.</span></span><br><span class="line"><span class="string">部署完成！</span></span><br></pre></td></tr></table></figure>
+
+<p>部署完成之后会在当前路径多出两个文件openvpn-install.sh、test.ovpn，openvpn-install.sh是一键脚本，test.ovpn是客户端配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ls</span></span><br><span class="line">openvpn-install.sh  test.ovpn</span><br></pre></td></tr></table></figure>
+
+<h4 id="另外再添加更多客户端"><a href="#另外再添加更多客户端" class="headerlink" title="另外再添加更多客户端"></a>另外再添加更多客户端</h4><p>只需输入 .&#x2F;openvpn-install.sh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ./openvpn-install.sh</span></span><br><span class="line">Welcome to OpenVPN-install!</span><br><span class="line">The git repository is available at: https://github.com/angristan/openvpn-install</span><br><span class="line"></span><br><span class="line">It looks like OpenVPN is already installed.</span><br><span class="line"></span><br><span class="line">What <span class="keyword">do</span> you want to <span class="keyword">do</span>?</span><br><span class="line">   1) Add a new user</span><br><span class="line">   2) Revoke existing user</span><br><span class="line">   3) Remove OpenVPN</span><br><span class="line">   4) Exit</span><br><span class="line">Select an option [1-4]: 1</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>添加新用户</li>
+<li>移除指定用户</li>
+<li>删除整个openvpn</li>
+<li>退出脚本</li>
+</ol>
+<p>创建客户端操作和上面一样，操作完成之后路径下会多出客户端配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@openvpn:~<span class="comment"># ls</span></span><br><span class="line">openvpn-install.sh  test2.ovpn  test.ovpn</span><br></pre></td></tr></table></figure>
+
+<p>客户端配置放到所需机器上使用即可！</p>
+<h3 id="debian命令行启动openvpn客户端"><a href="#debian命令行启动openvpn客户端" class="headerlink" title="debian命令行启动openvpn客户端"></a>debian命令行启动openvpn客户端</h3><h4 id="安装openvpn"><a href="#安装openvpn" class="headerlink" title="安装openvpn"></a>安装openvpn</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install openvpn -y</span><br></pre></td></tr></table></figure>
+
+<h4 id="放入配置文件"><a href="#放入配置文件" class="headerlink" title="放入配置文件"></a>放入配置文件</h4><p>把配置文件放到 &#x2F;etc&#x2F;openvpn&#x2F; 路径下，并且改名为 .conf 结尾</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> test.ovpn /etc/openvpn/test.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动openvpn客户端"><a href="#启动openvpn客户端" class="headerlink" title="启动openvpn客户端"></a>启动openvpn客户端</h4><p>命令中的test对应为配置文件的名称</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start openvpn@<span class="built_in">test</span></span><br><span class="line">systemctl <span class="built_in">enable</span> openvpn@<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>另外服务端访问客户端内网需要添加防火墙规则，看下文。</p>
+<h2 id="组网配置"><a href="#组网配置" class="headerlink" title="组网配置"></a>组网配置</h2><p>openvpn需要iptables防火墙，如没有则安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install iptables -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改配置使客户端可访问服务端内网"><a href="#修改配置使客户端可访问服务端内网" class="headerlink" title="修改配置使客户端可访问服务端内网"></a>修改配置使客户端可访问服务端内网</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/</span><br><span class="line">nano server.conf</span><br></pre></td></tr></table></figure>
+
+<p>这行建议注释掉，意思为把客户端的所有流量全局走vpn</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">push <span class="string">&quot;redirect-gateway def1 bypass-dhcp&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>更换为，中间是服务端内网段，这样只有直接访问服务端内网IP才会走vpn</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">push <span class="string">&quot;route 192.168.2.0 255.255.255.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>有更多网段需求可以以上方式增加更多网段路由。</p>
+<h3 id="修改配置使服务端可访问客户端内网"><a href="#修改配置使服务端可访问客户端内网" class="headerlink" title="修改配置使服务端可访问客户端内网"></a>修改配置使服务端可访问客户端内网</h3><p>服务端配置文件添加一行，意思这个网段走vpn</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route 192.168.3.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p>在&#x2F;etc&#x2F;openvpn&#x2F;ccd路径下创建并编辑客户端名称的文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano /etc/openvpn/ccd/test <span class="comment"># 我的客户端名称为test，所以写test</span></span><br></pre></td></tr></table></figure>
+
+<p>填入以下内容，修改中间网段为客户端网段</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iroute 192.168.3.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p><strong>客户端</strong> 添加防火墙规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o eth0 -j MASQUERADE</span><br><span class="line">iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<p>一个是服务端内网段，一个是vpn网段，修改为自己网段和网卡名。</p>
+<p>以上步骤缺一不可，否则服务端无法访问客户端内网段。</p>
+<h3 id="客户端防火墙规则持久化"><a href="#客户端防火墙规则持久化" class="headerlink" title="客户端防火墙规则持久化"></a>客户端防火墙规则持久化</h3><p>采用iptables-persistent持久化防火墙规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt install iptables-persistent <span class="comment"># 安装 iptables-persistent</span></span><br><span class="line">systemctl start netfilter-persistent <span class="comment"># 启动 iptables-persistent</span></span><br><span class="line">systemctl <span class="built_in">enable</span> netfilter-persistent <span class="comment"># 允许 iptables-persistent 开机自启</span></span><br><span class="line">iptables-save &gt; /etc/iptables/rules.v4 <span class="comment"># 保存防火墙规则</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="iptables防火墙可能用到的命令"><a href="#iptables防火墙可能用到的命令" class="headerlink" title="iptables防火墙可能用到的命令"></a>iptables防火墙可能用到的命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -L -n -v</span><br><span class="line"><span class="comment"># 查看 nat 表防火墙规则</span></span><br><span class="line">iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o eth0 -j MASQUERADE</span><br><span class="line"><span class="comment"># 添加IP动态伪装规则</span></span><br><span class="line">iptables -t nat -D POSTROUTING -o eth0 -s 192.168.2.0/24 -j MASQUERADE</span><br><span class="line"><span class="comment"># 删除 nat 表某规则</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 内网穿透</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/2463057718.html" rel="prev" title="debian部署tinc组网">
+      <i class="fa fa-chevron-left"></i> debian部署tinc组网
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/1641155356.html" rel="next" title="Linux更换国内源大全">
+      Linux更换国内源大全 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E5%81%9Aopenvpn%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">一键脚本做openvpn配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">服务端配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">客户端配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.2.1.</span> <span class="nav-text">添加第一个客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%A6%E5%A4%96%E5%86%8D%E6%B7%BB%E5%8A%A0%E6%9B%B4%E5%A4%9A%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.2.2.</span> <span class="nav-text">另外再添加更多客户端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#debian%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%90%AF%E5%8A%A8openvpn%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.3.</span> <span class="nav-text">debian命令行启动openvpn客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85openvpn"><span class="nav-number">1.3.1.</span> <span class="nav-text">安装openvpn</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BE%E5%85%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">放入配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8openvpn%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">启动openvpn客户端</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E7%BD%91%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">组网配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E4%BD%BF%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%AF%E8%AE%BF%E9%97%AE%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%86%85%E7%BD%91"><span class="nav-number">2.1.</span> <span class="nav-text">修改配置使客户端可访问服务端内网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E4%BD%BF%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%AF%E8%AE%BF%E9%97%AE%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%86%85%E7%BD%91"><span class="nav-number">2.2.</span> <span class="nav-text">修改配置使服务端可访问客户端内网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%98%B2%E7%81%AB%E5%A2%99%E8%A7%84%E5%88%99%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">客户端防火墙规则持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iptables%E9%98%B2%E7%81%AB%E5%A2%99%E5%8F%AF%E8%83%BD%E7%94%A8%E5%88%B0%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.</span> <span class="nav-text">iptables防火墙可能用到的命令</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="doyo"
+      src="/images/IMG_6985.jpeg">
+  <p class="site-author-name" itemprop="name">doyo</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">doyo</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'Ov23li55Rzo1NPjM7xb4',
+      clientSecret: '289d8a6034e609cb6298572a5d41e6a5f1d70c3c',
+      repo        : 'doyoman.github.io',
+      owner       : 'doyoman',
+      admin       : ['doyoman'],
+      id          : '91a802f536865344f118e19ef6ed496c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
